@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create course</title>
+    <link rel="stylesheet" href="../../static/css/Newcourse.css">
+</head>
+<body>
+<div class="card mb-3">
+    <div class="row g-0">
+        <form action="/newCourse" method="post" enctype="multipart/form-data">
+            <input id="dummy" value="{{ user.id }}" name="coach">
+            {{ form.hidden_tag() }}
+            <div class="col-md-8">
+                <div class="card-body">
+                    <h5 class="card-title">{{ form.cname.label(class="form-control-label") }}</h5>
+                    <p class="card-text">
+                        {{ form.cname(class="form-control form-control-lg") }}
+                    </p>
+                    <h5 class="card-title">{{ form.description.label(class="form-control-label") }}</h5>
+                    <p class="card-text">
+                        {{ form.description(class="form-control form-control-lg") }}
+                    </p>
+                    <h5 class="card-title">{{ form.start.label(class="form-control-label") }}</h5>
+                    <p class="card-text">
+                        {{ form.start(class="form-control form-control-lg") }}
+                    </p>
+                    <h5 class="card-title">{{ form.end.label(class="form-control-label") }}</h5>
+                    <p class="card-text">
+                        {{ form.end(class="form-control form-control-lg") }}
+                    </p>
+                    <h5 class="card-title">{{ form.cprofile.label(class="form-control-label") }}</h5>
+                    <p class="card-text">
+                        {{ form.cprofile(class="form-control form-control-lg") }}
+                    </p>
+                    <h5 class="card-title">{{ form.video.label(class="form-control-label") }}</h5>
+                    <p class="card-text">
+                        {{ form.video(class="form-control form-control-lg") }}
+                    </p>
+                    <p class="card-text">
+                        <small class="text-muted"> {{ form.submit(class="btn btn-info") }}</small>
+                    </p>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

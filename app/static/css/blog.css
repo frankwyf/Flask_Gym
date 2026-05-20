@@ -1,0 +1,99 @@
+.card-group{
+    display: inline-flex;
+    margin: 0 auto;
+    text-align: center;
+    overflow: hidden;
+}
+#post{
+    background-color: #bfcbfc;
+    width: 15%;
+    border-radius: 10px;
+    margin-top: 1%;
+    margin-left: 1.5%;
+    overflow: hidden;
+}
+#coach{
+    background-color: #bfcbfc;
+    width: 25%;
+    border-radius: 10px;
+    margin-top: 1%;
+    margin-left: 1.5%;
+    overflow: hidden;
+}
+#coach1{
+    background-color: #bfcbfc;
+    width: 25%;
+    border-radius: 10px;
+    margin-top: 1%;
+    overflow: hidden;
+}
+#post1{
+    background-color: #bfcbfc;
+    width: 15%;
+    border-radius: 10px;
+    margin-top: 1%;
+    overflow: hidden;
+}
+#newpost{
+    background-color: #cafcbf;
+    text-align: center;
+    width: 50%;
+    margin-left: 25%;
+    height: fit-content;
+    padding: 10px 10px 10px 10px;
+    border-radius: 10px;
+    margin-top: 1%;
+    overflow: hidden;
+    color: #1a1e21;
+}
+.card-img-top{
+    width: 500px;
+    height: 300px;
+}
+#dummy{
+    display: none;
+}
+.card-text{
+    font-size: 14px;
+}
+.text-muted{
+    color: #09c372;
+    font-size: 16px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+#delete{
+    color: #FFFFFF;
+    background-color: #a94442;
+    padding: 5px 5px 5px 5px;
+    border-radius: 5px;
+}
+.center-block{
+    margin-left: 45%;
+}
+#back{
+    margin-top: 3%;
+    margin-left: 40%;
+}
+#inpage{
+    background-color: #777777;
+    backdrop-filter: blur(5px);
+}
+video{
+    width: 230px;
+    height: 100%;
+    border-radius: 5px;
+}
+#coursecover{
+    height: 180px;
+}
+#coursecoverinpage{
+    height: 280px;
+}
+.img-fluid.my-5{
+    height: 50px;
+    width: 50px;
+    border-radius: 50%;
+}
+#vinpage{
+    width: 400px;
+}

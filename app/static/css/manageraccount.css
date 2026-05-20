@@ -1,0 +1,47 @@
+#accountTitle {
+    font-family: "Lucida Calligraphy", cursive, serif, sans-serif;
+    font-size: 20px;
+    color: #86b7fe;
+}
+.container.vh-100{
+    background-color: rgba(0, 0, 0, 0.79);
+    display: inline-block;
+    width: fit-content;
+}
+#fileupload{
+    color: rgba(0, 85, 255, 0.991);
+}
+#role{
+    font-family: "Lucida Calligraphy", cursive, serif, sans-serif;
+    color: #3b88fc;
+}
+.container.py-5.vh-100{
+    overflow: hidden;
+}
+.col-md-4.gradient-custom.text-center.text-white{
+    border-radius: 1rem;
+    margin-top: 3%;
+    width: 80%;
+    display: inline-block;
+}
+.col-md-7{
+    margin-left: 5%;
+}
+.img-fluid.my-5{
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+}
+#upload{
+    margin-top: 10%;
+}
+.gradient-custom {
+    /* fallback for old browsers */
+    background: #65f6c6;
+
+    /* Chrome 10-25, Safari 5.1-6 */
+    background: -webkit-linear-gradient(to right bottom, rgb(101, 246, 224), rgb(133, 253, 253));
+
+    /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    background: linear-gradient(to right bottom, rgb(101, 246, 111), rgb(209, 253, 133))
+}

@@ -1,0 +1,8 @@
+[run]
+source = app
+omit =
+    app/routes.py
+
+[report]
+show_missing = True
+skip_covered = False

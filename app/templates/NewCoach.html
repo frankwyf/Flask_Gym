@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Coach</title>
+    <link rel="stylesheet" href="../static/css/register.css">
+    <link rel="Shortcut Icon" href="../static/icon/register.ico" type="image/x-icon"/>
+    <script src="../static/js/jquery-3.6.1.min.js"></script>
+</head>
+
+<body>
+<div class="login-box">
+    <h1>Joining Workout</h1>
+    {% for message in get_flashed_messages() %}
+        <!--info box-->
+        <div class="alert alert-info" role="alert" id="info">
+            <div class="flash">{{ message }}</div>
+        </div>
+    {% endfor %}
+    <div class="input-box">
+        <form class="input-group" action="/newCoach" method="POST" id="form">
+            <div class="input-text">
+                <svg class="w-6 h-6" fill="#fff" weight="20" height="20" stroke="#7f7f7f" viewBox="0 0 25 20">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z">
+                    </path>
+                </svg>
+                <input type="text" class="username-text" id="username" name="name" placeholder="Username">
+                <div class="error-message"></div>
+            </div>
+            <div class="input-text">
+                <svg class="w-6 h-6" fill="#fff" weight="20" height="20" stroke="#7f7f7f" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                    </path>
+                </svg>
+                <input type="text" class="e-mail" id="e-mail" name="mailenter" placeholder="e-mail">
+                <div class="error-message"></div>
+            </div>
+            <div class="input-text">
+                <svg idth="20" fill="#fff" weight="20" height="20" stroke="#7f7f7f" viewBox="0 0 128 128">
+                    <g>
+                        <path d="M67.752,55.944A29.875,29.875,0,1,0,37.877,85.819,29.909,29.909,0,0,0,67.752,55.944ZM59.007,71.712a26.224,26.224,0,0,1,0-31.536,26.324,26.324,0,0,1,0,31.536ZM11.5,55.944A26.362,26.362,0,0,1,50.271,32.671a37.728,37.728,0,0,0,0,46.546A26.361,26.361,0,0,1,11.5,55.944ZM53.251,77.355a34.261,34.261,0,0,1,0-42.821,26.448,26.448,0,0,1,3.418,2.928,29.771,29.771,0,0,0,0,36.965A26.526,26.526,0,0,1,53.251,77.355Z"/>
+                        <path d="M126.248,8.058H108.237A1.75,1.75,0,0,0,107,11.045l4.939,4.94L102.5,25.423a37.947,37.947,0,0,0-22.388-7.354,37.537,37.537,0,0,0-21.107,6.456A37.868,37.868,0,1,0,32.127,93.377v7.576H26.252a1.75,1.75,0,0,0-1.75,1.75v8a1.751,1.751,0,0,0,1.75,1.75h5.875v5.739a1.751,1.751,0,0,0,1.75,1.75h8a1.751,1.751,0,0,0,1.75-1.75v-5.739H49.5a1.751,1.751,0,0,0,1.75-1.75v-8a1.75,1.75,0,0,0-1.75-1.75H43.627V93.377a37.7,37.7,0,0,0,15.4-6,37.538,37.538,0,0,0,21.085,6.439,37.845,37.845,0,0,0,30.521-60.263l9.438-9.439,4.94,4.94A1.75,1.75,0,0,0,128,27.819V9.808A1.751,1.751,0,0,0,126.248,8.058ZM41.685,90.1a1.75,1.75,0,0,0-1.558,1.739V102.7a1.751,1.751,0,0,0,1.75,1.75h5.875v4.5H41.877a1.75,1.75,0,0,0-1.75,1.75v5.739h-4.5V110.7a1.75,1.75,0,0,0-1.75-1.75H28v-4.5h5.875a1.751,1.751,0,0,0,1.75-1.75V91.843A1.75,1.75,0,0,0,34.069,90.1a34.356,34.356,0,1,1,29.9-11.766,1.747,1.747,0,0,0-.376.412c-.014.022-.022.046-.035.069a34.423,34.423,0,0,1-5.338,4.848,1.7,1.7,0,0,0-.486.358A34.247,34.247,0,0,1,41.685,90.1ZM67.728,32.675a26.375,26.375,0,1,1,.036,46.557,37.846,37.846,0,0,0-.036-46.557Zm56.77-9.081-3.189-3.189a1.749,1.749,0,0,0-2.475,0L107.073,32.166a1.749,1.749,0,0,0-.128,2.331,33.97,33.97,0,0,1,7.542,21.447A34.414,34.414,0,0,1,80.112,90.319a34.035,34.035,0,0,1-18.089-5.176,37.981,37.981,0,0,0,3.422-3.2,29.876,29.876,0,1,0-.039-51.966A38.164,38.164,0,0,0,62,26.764a34.229,34.229,0,0,1,39.563,2.347,1.75,1.75,0,0,0,2.332-.128l11.76-11.761a1.748,1.748,0,0,0,0-2.474l-3.189-3.19H124.5Z"/>
+                    </g>
+                </svg>
+                <input type="radio" class="form-check-input" checked id="secrete" name="gender"
+                       value="0"><label>Secrete</label>
+                <input type="radio" class="form-check-input" id="male" name="gender" value="1"><label>Male</label>
+                <input type="radio" class="form-check-input" id="female" name="gender" value="2"><label>Female</label>
+                <div class="error-message"></div>
+            </div>
+            <div class="input-text">
+                <svg class="w-6 h-6" fill="#fff" weight="20" height="20" stroke="#7f7f7f" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z">
+                    </path>
+                </svg>
+                <input type="password" class="password-text" id="password" name="psw" placeholder="Password">
+                <div class="error-message"></div>
+            </div>
+            <div class="input-text">
+                <svg class="w-6 h-6" fill="#fff" weight="20" height="20" stroke="#7f7f7f" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z">
+                    </path>
+                </svg>
+                <input type="password" class="comfirm-password" id="confirm" placeholder="confirm password">
+                <div class="error-message"></div>
+            </div>
+            <div class="input-btn">
+                <button type="submit" onclick="{{ url_for('newCoach') }}">Register</button>
+                <button type="reset" onclick="formReset()">Reset</button>
+                <button type="button" id="back"><a id="fack-button"
+                                                   href="{{ url_for('newlogin') }}">Back</a></button>
+            </div>
+        </form>
+    </div>
+</div>
+<script src="../static/js/register.js"></script>
+</body>
+</html>

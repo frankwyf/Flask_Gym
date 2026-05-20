@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Visualization</title>
+</head>
+<body>
+<div class="panel-group" id="accordion">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="panel-title">
+                <a href="#panel1" class="panel-toggle" data-toggle="collapse" data-parent="#accordion">
+                    Customer data
+                </a>
+            </div>
+        </div>
+        <div id="panel1" class="panel-collapse collapse in">
+            <div class="panel-body">
+                <!--Customer membership distribution-->
+                <div class="panel panel-primary" id="picturewrap">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Membership Distribution</h3>
+                    </div>
+                    <div class="panel-body">
+                        <div id="main0" class="picture"
+                             style="background-color: antiquewhite;height: 100%; width: 100%"></div>
+                    </div>
+                </div>
+                <script type="text/javascript" charset="UTF-8">
+                    var kv = new Array();
+                    kv =
+                    {{ membership | safe }}
+                    var test = new Array();
+                    for (var logkey in kv) {
+                        test.push({value: kv[logkey], name: logkey})
+                    }
+                    var display = function () {
+                        var main0 = echarts.init(document.getElementById("main0"));
+                        var option = {
+                            legend: {
+                                orient: 'vertical',
+                                left: 'left',
+                            },
+                            series: [
+                                {
+                                    type: 'pie',
+                                    radius: '80%',
+                                    center: ['50%', '50%'],
+                                    detail: {formatter: '{value}'},
+                                    data: test,
+                                    itemStyle: {
+                                        normal: {
+                                            label: {
+                                                show: true,
+                                                formatter: '{b} : {c} ({d}%)'
+                                            },
+                                            labelLine: {show: true}
+                                        }
+                                    }
+                                }
+                            ]
+                        };
+                        main0.setOption(option, true);
+                    };
+                    display();
+                </script>
+                <!--Customer Gender distribution-->
+                <div class="panel panel-primary" id="picturewrap">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Gender Distribution</h3>
+                    </div>
+                    <div class="panel-body">
+                        <div id="main" class="picture"
+                             style="background-color: antiquewhite;height: 100%; width: 100%"></div>
+                    </div>
+                </div>
+                <script type="text/javascript" charset="UTF-8">
+                    var kv = new Array();
+                    kv =
+                    {{ sex | safe }}
+                    var test = new Array();
+                    for (var logkey in kv) {
+                        test.push({value: kv[logkey], name: logkey})
+                    }
+                    var display = function () {
+                        var main = echarts.init(document.getElementById("main"));
+                        var option = {
+                            legend: {
+                                orient: 'vertical',
+                                left: 'left',
+                            },
+                            color: ["rgba(255,0,0,0.62)", "rgba(0,119,255,0.83)", "rgba(255,0,195,0.6)"],
+                            series: [
+                                {
+                                    type: 'pie',
+                                    radius: '80%',
+                                    center: ['50%', '50%'],
+                                    detail: {formatter: '{value}'},
+                                    data: test,
+                                    itemStyle: {
+                                        normal: {
+                                            label: {
+                                                show: true,
+                                                formatter: '{b} : {c} ({d}%)'
+                                            },
+                                            labelLine: {show: true}
+                                        }
+                                    }
+                                }
+                            ]
+                        };
+                        main.setOption(option, true);
+                    };
+                    display();
+                </script>
+                <!--Online and offline status -->
+                <div class="panel panel-primary" id="picturewrap">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Online/Offline status</h3>
+                    </div>
+                    <div class="panel-body">
+                        <div id="main1" class="picture"
+                             style="background-color: antiquewhite;height: 100%; width: 100%"></div>
+                    </div>
+                </div>
+                <script type="text/javascript" charset="UTF-8">
+                    var kv = new Array();
+                    var keys = new Array();
+                    var values = new Array();
+                    kv =
+                    {{ status | safe }}
+                    for (var logkey in kv) {
+                        keys.push(logkey);
+                        values.push(kv[logkey]);
+                    }
+                    var display = function () {
+                        var main1 = echarts.init(document.getElementById("main1"));
+                        var option = {
+                            grid: {
+                                x: 150,
+                                y: 30,
+                                x2: 150,
+                                y2: 20,
+                                borderWidth: 10
+                            },
+                            xAxis: {
+                                type: 'category',
+                                data: keys
+                            },
+                            yAxis: {
+                                type: 'value'
+                            },
+                            series: [{
+                                data: values,
+                                detail: {formatter: '{value}'},
+                                type: 'bar',
+                                showBackground: true,
+                                backgroundStyle: {
+                                    color: 'rgba(180, 180, 180, 0.2)'
+                                },
+                                itemStyle: {
+                                    normal: {
+                                        color: function (params) {
+                                            // build a color map
+                                            var colorList = ['#3F77FE', '#C1232B'];
+                                            return colorList[params.dataIndex]
+                                        },
+                                        label: {
+                                            show: true,
+                                            position: 'top',
+                                            formatter: '{b}\n{c}'
+                                        }
+                                    }
+                                },
+                            }]
+                        };
+                        main1.setOption(option, true);
+                    };
+                    display();
+                </script>
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="panel-title">
+                <a href="#panel2" class="panel-toggle" data-toggle="collapse" data-parent="#accordion">
+                    Coach data
+                </a>
+            </div>
+        </div>
+        <div id="panel2" class="panel-collapse collapse in">
+            <div class="panel-body">
+                <!--Coach Gender distribution-->
+                <div class="panel panel-primary" id="picturewrap">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Gender Distribution</h3>
+                    </div>
+                    <div class="panel-body">
+                        <div id="main_0" class="picture"
+                             style="background-color: antiquewhite;height: 100%; width: 100%"></div>
+                    </div>
+                </div>
+                <script type="text/javascript" charset="UTF-8">
+                    var kv = new Array();
+                    kv =
+                    {{ sex_0 | safe }}
+                    var test = new Array();
+                    for (var logkey in kv) {
+                        test.push({value: kv[logkey], name: logkey})
+                    }
+                    var display = function () {
+                        var main_0 = echarts.init(document.getElementById("main_0"));
+                        var option = {
+                            legend: {
+                                orient: 'vertical',
+                                left: 'left',
+                            },
+                            series: [
+                                {
+                                    type: 'pie',
+                                    radius: '80%',
+                                    center: ['50%', '50%'],
+                                    detail: {formatter: '{value}'},
+                                    data: test,
+                                    itemStyle: {
+                                        normal: {
+                                            label: {
+                                                show: true,
+                                                formatter: '{b} : {c} ({d}%)'
+                                            },
+                                            labelLine: {show: true}
+                                        }
+                                    }
+                                }
+                            ]
+                        };
+                        main_0.setOption(option, true);
+                    };
+                    display();
+                </script>
+                <!--Coach speciality distribution-->
+                <div class="panel panel-primary" id="picturewrap">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Speciality Distribution</h3>
+                    </div>
+                    <div class="panel-body">
+                        <div id="main_1" class="picture"
+                             style="background-color: antiquewhite;height: 100%; width: 100%"></div>
+                    </div>
+                </div>
+                <script type="text/javascript" charset="UTF-8">
+                    var kv = new Array();
+                    kv =
+                    {{ s_1 | safe }}
+                    var test = new Array();
+                    for (var logkey in kv) {
+                        test.push({value: kv[logkey], name: logkey})
+                    }
+                    var display = function () {
+                        var main_1 = echarts.init(document.getElementById("main_1"));
+                        var option = {
+                            legend: {
+                                orient: 'vertical',
+                                left: 'left',
+                            },
+                            series: [
+                                {
+                                    type: 'pie',
+                                    radius: '80%',
+                                    center: ['50%', '50%'],
+                                    detail: {formatter: '{value}'},
+                                    data: test,
+                                    itemStyle: {
+                                        normal: {
+                                            label: {
+                                                show: true,
+                                                formatter: '{b} : {c} ({d}%)'
+                                            },
+                                            labelLine: {show: true}
+                                        }
+                                    }
+                                }
+                            ]
+                        };
+                        main_1.setOption(option, true);
+                    };
+                    display();
+                </script>
+            </div>
+        </div>
+    </div>
+    {% if author == 1 %}
+        <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="panel-title">
+                <a href="#panel2" class="panel-toggle" data-toggle="collapse" data-parent="#accordion">
+                    Management data
+                </a>
+            </div>
+        </div>
+        <div id="panel2" class="panel-collapse collapse in">
+        <div class="panel-body">
+            <!--Coach Gender distribution-->
+            <div class="panel panel-primary" id="picturewrap">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Status Distribution</h3>
+                </div>
+                <div class="panel-body">
+                    <div id="main_11" class="picture"
+                         style="background-color: antiquewhite;height: 100%; width: 100%"></div>
+                </div>
+            </div>
+            <script type="text/javascript" charset="UTF-8">
+                var kv = new Array();
+                kv =
+                {{ sex_1 | safe }}
+                var test = new Array();
+                for (var logkey in kv) {
+                    test.push({value: kv[logkey], name: logkey})
+                }
+                var display = function () {
+                    var main_11 = echarts.init(document.getElementById("main_11"));
+                    var option = {
+                        legend: {
+                            orient: 'vertical',
+                            left: 'left',
+                        },
+                        series: [
+                            {
+                                type: 'pie',
+                                radius: '80%',
+                                center: ['50%', '50%'],
+                                detail: {formatter: '{value}'},
+                                data: test,
+                                itemStyle: {
+                                    normal: {
+                                        label: {
+                                            show: true,
+                                            formatter: '{b} : {c} ({d}%)'
+                                        },
+                                        labelLine: {show: true}
+                                    }
+                                }
+                            }
+                        ]
+                    };
+                    main_11.setOption(option, true);
+                };
+                display();
+            </script>
+            <div id="panel2" class="panel-collapse collapse in">
+                <div class="panel-body">
+                    <div class="panel panel-primary" id="picturewrap">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Interaction (Members and Coaches)</h3>
+                        </div>
+                        <div class="panel-body">
+                            <div id="main2" class="picture"
+                                 style="background-color: antiquewhite;height: 600px; width: 100%"></div>
+                        </div>
+                    </div>
+                    <script type="text/javascript" charset="UTF-8">
+                        var kv = new Array();
+                        var keys = new Array();
+                        var values = new Array();
+                        kv =
+                        {{ status | safe }}
+                        for (var logkey in kv) {
+                            keys.push(logkey);
+                            values.push(kv[logkey]);
+                        }
+                        var display = function () {
+                            var main2 = echarts.init(document.getElementById("main2"));
+                            var option = {
+                                legend: {},
+                                tooltip: {
+                                    trigger: 'axis',
+                                    showContent: false
+                                },
+                                dataset: {
+                                    source: {{ sales | safe }}
+                                },
+                                xAxis: {type: 'category'},
+                                yAxis: {gridIndex: 0},
+                                grid: {top: '55%'},
+                                series: [
+                                    {
+                                        type: 'line',
+                                        smooth: true,
+                                        seriesLayoutBy: 'row',
+                                        emphasis: {focus: 'series'}
+                                    },
+                                    {
+                                        type: 'line',
+                                        smooth: true,
+                                        seriesLayoutBy: 'row',
+                                        emphasis: {focus: 'series'}
+                                    },
+                                    {
+                                        type: 'line',
+                                        smooth: true,
+                                        seriesLayoutBy: 'row',
+                                        emphasis: {focus: 'series'}
+                                    },
+                                    {
+                                        type: 'line',
+                                        smooth: true,
+                                        seriesLayoutBy: 'row',
+                                        emphasis: {focus: 'series'}
+                                    },
+                                    {
+                                        type: 'pie',
+                                        id: 'pie',
+                                        radius: '30%',
+                                        center: ['50%', '25%'],
+                                        emphasis: {
+                                            focus: 'self'
+                                        },
+                                        label: {
+                                            formatter: '{b}: {@Swimming} ({d}%)'
+                                        },
+                                        encode: {
+                                            itemName: 'product',
+                                            value: 'Swimming',
+                                            tooltip: 'Swimming'
+                                        }
+                                    }
+                                ]
+                            };
+                            main2.on('updateAxisPointer', function (event) {
+                                const xAxisInfo = event.axesInfo[0];
+                                if (xAxisInfo) {
+                                    const dimension = xAxisInfo.value + 1;
+                                    main2.setOption({
+                                        series: {
+                                            id: 'pie',
+                                            label: {
+                                                formatter: '{b}: {@[' + dimension + ']} ({d}%)'
+                                            },
+                                            encode: {
+                                                value: dimension,
+                                                tooltip: dimension
+                                            }
+                                        }
+                                    });
+                                }
+                            });
+                            main2.setOption(option, true);
+                        };
+                        display();
+                    </script>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+    </div>
+    <script type="text/javascript" src="../../static/js/visual.js"></script>
+</body>
+</html>

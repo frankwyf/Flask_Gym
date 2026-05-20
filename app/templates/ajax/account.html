@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <meta http-equiv="x-ua-compatible" content="ie=edge"/>
+    <title>show account page</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.2/css/all.css"/>
+    <!-- Google Fonts Roboto -->
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap"/>
+    <link rel="stylesheet" href="../../static/css/account.css"/>
+</head>
+
+<body>
+<section class="vh-100">
+    <form method="POST" action="/updateAccount" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+        <div class="container py-5 h-100">
+            <div class="row">
+                <div class="col col-lg-6 mb-4 mb-lg-0">
+                    <div class="card mb-3" style="border-radius: .5rem;">
+                        <div class="col-lg-offset-1">
+                            <div class="col-md-4 gradient-custom text-center text-white">
+                                <img src="{{ user.profile }}" class="img-fluid my-5"/>
+                                <p id="role"> @{{ role }}</p>
+                                <h5 id="role">Welcome: {{ form.username(class="form-control form-control-lg") }}</h5>
+                                <div class="input-group mb-3">
+                                    <i class="far fa-edit mb-5" id="fileupload">New profile</i>
+                                    {{ form.picture(class="form-control") }}
+                                </div>
+                                <h5 id="role">Email: {{ form.email(class="form-control form-control-lg") }}</h5>
+                                <div class="form-group" id="upload">
+                                    {{ form.submit(class="btn btn-info") }}
+                                </div>
+                            </div>
+                            <div class="col-md-7">
+                                <div class="card-body p-4">
+                                    <h5 id="accountTitle">Personal Information:</h5>
+                                    <p class="text-light">
+                                        Gender: {{ form.gender(class="form-control form-control-lg") }}</p>
+                                    <p class="text-light">
+                                        Birthday: {{ form.birthday(class="form-control form-control-lg") }}</p>
+                                    <p class="text-light"> Weight (in
+                                        KG): {{ form.weight(class="form-control form-control-lg") }}
+                                        Height (in CM): {{ form.height(class="form-control form-control-lg") }}</p>
+                                    <h5 id="accountTitle">Sports Aim:</h5>
+                                    <p class="text-light"> Working towards
+                                        (KG): {{ form.aim(class="form-control form-control-lg") }}</p>
+                                     <p class="text-light">Preference:
+                                        {{ form.prefer(class="form-control form-control-lg") }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</section>
+</body>
+
+</html>

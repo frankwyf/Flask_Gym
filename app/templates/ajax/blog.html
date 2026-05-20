@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Blogs</title>
+    <link rel="stylesheet" href="../../static/css/blog.css">
+</head>
+<body>
+<div class="card" id="newpost">
+    <div class="card-body">
+        <h5 class="card-title"><strong>{{ user.username }}</strong> Share your experience!</h5>
+        <form method="post" action="/createPost" enctype="multipart/form-data">
+            {{ form.hidden_tag() }}
+            <input id="dummy" name="target" value="{{ user.id }}">
+            <p class="card-text">
+                {{ form.picture.label(class="form-control-label") }}
+                {{ form.picture(class="form-control") }}
+            </p>
+            <p class="card-text">
+                {{ form.description(class="form-control") }}
+            </p>
+            <p class="card-text">
+                {{ form.tag(class="form-control") }}
+            </p>
+            {{ form.submit(class="btn btn-warning") }}
+        </form>
+    </div>
+</div>
+<div class="card-group">
+    {% for post in posts.items %}
+        {% if loop.first %}
+            <div class="card" id="post1">
+                <img src="{{ post.photo }}" class="card-img-top"
+                     alt="Hollywood Sign on The Hill"/>
+                <div class="card-body">
+                    <h5 class="card-title">Anonymous user: {{ post.uid }}</h5>
+                    <p class="card-text">
+                        {{ post.description }}
+                    </p>
+                    <p class="card-text">
+                        <small class="text-muted"># {{ post.tag }}</small>
+                    </p>
+                    {% if post.uid == user.id %}
+                        <a id="delete" href="{{ url_for('deletePost', target=post.id) }}">Delete</a>
+                    {% endif %}
+                </div>
+            </div>
+        {% elif loop.index == 2 %}
+            <div class="card" id="post">
+                <img src="{{ post.photo }}" class="card-img-top"
+                     alt="Hollywood Sign on The Hill"/>
+                <div class="card-body">
+                    <h5 class="card-title">Anonymous user: {{ post.uid }}</h5>
+                    <p class="card-text">
+                        {{ post.description }}
+                    </p>
+                    <p class="card-text">
+                        <small class="text-muted"># {{ post.tag }}</small>
+                    </p>
+                    {% if post.uid == user.id %}
+                        <a id="delete" href="{{ url_for('deletePost', target=post.id) }}">Delete</a>
+                    {% endif %}
+                </div>
+            </div>
+        {% elif loop.last %}
+            <div class="card" id="post">
+                <img src="{{ post.photo }}" class="card-img-top"
+                     alt="Hollywood Sign on The Hill"/>
+                <div class="card-body">
+                    <h5 class="card-title">Anonymous user: {{ post.uid }}</h5>
+                    <p class="card-text">
+                        {{ post.description }}
+                    </p>
+                    <p class="card-text">
+                        <small class="text-muted"># {{ post.tag }}</small>
+                    </p>
+                    {% if post.uid == user.id %}
+                        <a id="delete" href="{{ url_for('deletePost', target=post.id) }}">Delete</a>
+                    {% endif %}
+                </div>
+            </div>
+        {% endif %}
+    {% endfor %}
+</div>
+<div class="center-block">
+    {% for page_num in posts.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+    {% if page_num %}
+        {% if posts.page == page_num %}
+            <a class="btn btn-info mb-4" href="{{ url_for('ShowblogInpage', page=page_num) }}">{{ page_num }}</a>
+        {% else %}
+            <a class="btn btn-outline-info mb-4" href="{{ url_for('ShowblogInpage', page=page_num) }}">{{ page_num }}</a>
+        {% endif %}
+    {% else %}
+        ...
+    {% endif %}
+{% endfor %}
+</div>
+</body>
+</html>

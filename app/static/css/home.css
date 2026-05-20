@@ -1,0 +1,167 @@
+body {
+  background: url(../img/background.jpg);
+  background-size: cover;
+  background-repeat: no-repeat;
+  backdrop-filter: blur(5px);
+}
+.panel-body{
+    background: rgba(0, 0, 0, 0.79);
+    color: #fff;
+}
+/* clock and weather api */
+.weather {
+    margin-left: 55%;
+}
+@font-face {
+    font-family: 'Orbitron';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url(https://fonts.gstatic.com/s/orbitron/v25/yMJMMIlzdpvBhQQL_SC3X9yhF25-T1nyGy6BoWgz.woff2) format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+.text__color {
+    background: linear-gradient(to bottom, #fc913a, #b44200);
+    -webkit-text-fill-color: transparent;
+    -webkit-background-clip: text;
+}
+
+.time__wrapper {
+    position: relative;
+}
+
+#time {
+    text-shadow: 0 0 55px #fc913a;
+    font-size: 4.5rem;
+}
+#title{
+    text-align: center;
+}
+.list-group-item{
+    text-align: center;
+}
+#icon{
+    margin-right: 10px;
+}
+.page-header{
+    color: #FFFFFF;
+    display: inline;
+}
+
+#foot{
+    color: #FFFFFF;
+    font-size: 12px;
+    font-family: "Lucida Calligraphy", cursive, serif, sans-serif;
+}
+
+#med {
+    position: absolute;
+    top: 10px;
+    right: 0;
+}
+
+.day__wrapper {
+    display: flex;
+    justify-content: space-between;
+}
+
+.day__wrapper span {
+    font-size: 0.9rem;
+    opacity: 0.4;
+    font-weight: 600;
+    padding: 0 4px;
+}
+
+#full__date {
+    padding-left: 4px;
+}
+
+.wrapper {
+    float: left;
+    background-color: rgb(191, 248, 229);
+    padding: 3px;
+    border-radius: 5px;
+}
+#screen{
+    width: 100%;
+}
+.min-vh-100{
+    background-color:#2e6da4;
+    border-radius: 5px;
+}
+#logout{
+    margin-left: 20px;
+    font-family: "Lucida Calligraphy", cursive, serif, sans-serif;
+}
+#logoutlink{
+    color: #FFFFFF;
+    text-decoration: none;
+}
+#name{
+    color: #FFFFFF;
+}
+i{
+    font-family: 'Raleway', sans-serif;
+    color: #09c372;
+}
+#email{
+    color: #5cb85c;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+#profile{
+    width: 80px;
+    height: 80px;
+}
+
+@media only screen and (max-width:500px) {
+    .weather,.wrapper {
+        display: none;
+    }
+}
+#msg{
+    color: #09c372;
+    font-family: "Lucida Calligraphy", cursive, serif, sans-serif;
+    font-size: 16px;
+}
+@media only screen and (max-width:600px) and (max-height:750px){
+    .weather,.wrapper {
+        display: none;
+    }
+}
+
+@media only screen and (max-width:800px) and (min-width:500px) {
+    .weather {
+        margin-left: 43%;
+    }
+    .wrapper{
+        margin-top: -14%;
+        margin-left: 3%;
+    }
+}
+@media only screen and (min-width:800px) and (max-width:1000px) {
+    .wrapper{
+        margin-top: -13%;
+        width: 30%;
+        margin-left: 5%;
+    }
+    .weather{
+        margin-left: 45%;
+    }
+}
+@media only screen and ( max-width:1100px) and (min-width:1000px) {
+    .wrapper{
+        width: 30%;
+        margin-left: 5%;
+        margin-top: -11%;
+    }
+    .weather{
+        margin-left: 50%;
+    }
+}
+@media only screen and (min-width:1100px) {
+    .wrapper{
+        width: 30%;
+        margin-top: -8%;
+        margin-left: 5%;
+    }
+}

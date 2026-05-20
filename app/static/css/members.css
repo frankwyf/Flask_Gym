@@ -1,0 +1,43 @@
+.table.align-middle.mb-0.bg-white{
+    background-color: #86b7fe;
+    border-radius: 10px;
+}
+.rounded-circle{
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+}
+.badge-success{
+    background-color: #09c372;
+}
+.badge-warning{
+    background-color: #a94442;
+}
+.btn.btn-outline-info{
+    background-color: #09c372;
+}
+.btn.btn-outline-warning{
+    background-color: #a94442;
+    margin-top: -30%;
+    margin-left: 50%;
+    color: #FFFFFF;
+}
+#delete{
+    color: #FFFFFF;
+}
+#add{
+    color: #FFFFFF;
+    margin-top: 2%;
+    margin-bottom: 2%;
+    margin-left: 40%;
+}
+#target{
+    display: none;
+}
+#remove{
+    color: #FFFFFF;
+}
+.btn.btn-outline{
+    background-color: #a94442;
+    color: #FFFFFF;
+}

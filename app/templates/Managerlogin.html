@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="../static/css/management.css">
+    <link rel="stylesheet" href="../static/css/bootstrap.css">
+    <link rel="Shortcut Icon" href="../static/icon/login.ico" type="image/x-icon"/>
+</head>
+<body>
+<div class="container">
+    <h1 id="welcome"> Management system</h1>
+    {% for message in get_flashed_messages() %}
+        <!--info box-->
+        <div class="alert alert-info" role="alert" id="info">
+            <div class="flash">{{ message }}</div>
+        </div>
+    {% endfor %}
+    <form action="/Managers" method="post" id="form">
+        <div class="username-section">
+            {% if username %}
+                <input type="text" class="username-text" id=username name="name" placeholder="Username"
+                       value={{ username }}>
+            {% else %}
+                <input type="text" class="username-text" id=username name="name" placeholder="Username">
+            {% endif %}
+            <img src="../static/img/username.png" alt="Username">
+            <div class="error-message"></div>
+        </div>
+        <div class="password-section">
+            {% if password %}
+                <input type="password" class="password-text" id=password name="psw" placeholder="Password"
+                       value={{ password }}>
+            {% else %}
+                <input type="password" class="password-text" id=password name="psw" placeholder="Password">
+            {% endif %}
+            <img src="../static/img/password.png" alt="Password">
+            <div class="error-message"></div>
+        </div>
+        <div class="remember">
+            <input class="form-check-input" id="remember" name="remember" type="checkbox" value="1" checked>Remember
+        </div>
+        <div class="input-btn">
+            <button type="submit" id="login_btn">Login</button>
+        </div>
+        <img src="../static/img/normal.png" alt="Normal">
+        <div id="toggle">
+            <i class="button" id="toggle"></i>
+        </div>
+        <div class="manager">
+            General manager Login:
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" id="General"
+                    data-bs-target="#staticBackdrop">General Manager
+            </button>
+        </div>
+        <div class="forget">
+            Forget your password?
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" id="forget"
+                    data-bs-target="#staticBackdrop1">Retrieve password
+            </button>
+        </div>
+        <button type="button" id="backtouser"><a id="fack-button"
+                                                 href="{{ url_for('newlogin') }}">Back</a></button>
+    </form>
+    <div class="square">
+        <ul class=li1>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+        </ul>
+    </div>
+</div>
+<!--Admin login modal-->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+     aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">General manager login</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" action="/Managerlogin">
+                    {{ form.hidden_tag() }}
+                    <fieldset class="form-group">
+                        <legend class="border-bottom mb-4">Welcome Super Admin!</legend>
+                        <div class="form-group">
+                            {{ form.username.label(class="form-control-label") }}
+                            {{ form.username(class="form-control form-control-lg") }}
+                        </div>
+                        <div class="form-group">
+                            {{ form.password.label(class="form-control-label") }}
+                            {{ form.password(class="form-control form-control-lg") }}
+                        </div>
+                        <div class="form-check">
+                            {{ form.remember(class="form-check-input") }}
+                            {{ form.remember.label(class="form-check-label") }}
+                        </div>
+                    </fieldset>
+                    <div class="form-group">
+                        {{ form.login(class="btn btn-outline-info") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Retrieve password modal-->
+<div class="modal fade" id="staticBackdrop1" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+     aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Retrieve password</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" action="/Request_password_reset">
+                    {{ form1.hidden_tag() }}
+                    <fieldset class="form-group">
+                        <legend class="border-bottom mb-4">Validate your Account information</legend>
+                        <div class="form-group">
+                            {{ form1.username.label(class="form-control-label") }}
+                            {{ form1.username(class="form-control form-control-lg") }}
+                        </div>
+                        <div class="form-group">
+                            {{ form1.email.label(class="form-control-label") }}
+                            {{ form1.email(class="form-control form-control-lg") }}
+                        </div>
+                        <div class="form-group">
+                            {{ form1.CustomerType.label(class="form-control-label") }}
+                            {{ form1.CustomerType(class="form-control form-control-lg") }}
+                        </div>
+                    </fieldset>
+                    {{ form1.adjust(class="btn btn-outline-info") }}
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../static/js/jquery.min.js"></script>
+<script src="../static/js/managerLogin.js"></script>
+<script type="text/javascript" src="../static/js/bootstrap.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>Coaches</title>
+    <link rel="stylesheet" href="../../static/css/members.css">
+</head>
+<body>
+<button class="btn btn-outline-info" id="add">
+    <a id="delete" href="{{ url_for('addManager') }}">Add new Manager</a>
+</button>
+<table class="table align-middle mb-0 bg-white">
+    <thead class="bg-light">
+    <tr>
+        <th>Information</th>
+        <th>Type</th>
+        <th>Status</th>
+        <th>Contact</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for member in members %}
+        <tr>
+            <td>
+                <div class="d-flex align-items-center">
+                    <img src="../../static/managerProfile/Manager.jpg" class="rounded-circle"/>
+                    <div class="ms-3">
+                        <p class="fw-bold mb-1">{{ member.username }}</p>
+                    </div>
+                </div>
+            </td>
+            <td>
+                <p class="fw-normal mb-1">Gym Manager</p>
+            </td>
+            {% if member.log == 1 %}
+                <td>
+                    <span class="badge-success">Online</span>
+                </td>
+            {% elif member.log == 0 %}
+                <td>
+                    <span class="badge-warning">Offline</span>
+                </td>
+            {% endif %}
+            <td>
+                <p class="text-light mb-0">{{ member.Email }}</p>
+            </td>
+            <td>
+                <button class="btn btn-outline" id="remove">
+                    <a id="delete" href="{{ url_for('deleteManager',id=member.aid) }}">Remove</a>
+                </button>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+</body>
+<script type="text/javascript" src="../../static/js/visual.js"></script>
+</html>

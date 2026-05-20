@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>Members</title>
+    <link rel="stylesheet" href="../../static/css/members.css">
+</head>
+<body>
+<table class="table align-middle mb-0 bg-white">
+    <thead class="bg-light">
+    <tr>
+        <th>Information</th>
+        <th>Type</th>
+        <th>Status</th>
+        <th>Membership</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for member in members %}
+        <tr>
+            <td>
+                <div class="d-flex align-items-center">
+                    <img src="{{ member.profile }}" class="rounded-circle"/>
+                    <div class="ms-3">
+                        <p class="fw-bold mb-1">{{ member.username }}</p>
+                        <p class="text-light mb-1">{{ member.Email }}</p>
+                    </div>
+                </div>
+            </td>
+            <td>
+                {% if member.sex == 0 %}
+                    <p class="text-light mb-0">Gender: Unknown</p>
+                {% elif member.sex == 1 %}
+                    <p class="text-light mb-0">Gender: Male</p>
+                {% elif member.sex == 2 %}
+                    <p class="text-light mb-0">Gender: Female</p>
+                {% endif %}
+            </td>
+            {% if member.log == 1 %}
+                <td>
+                    <span class="badge-success">Online</span>
+                </td>
+            {% elif member.log == 0 %}
+                <td>
+                    <span class="badge-warning">Offline</span>
+                </td>
+            {% endif %}
+            {% if member.status == 0 %}
+                <td>Free trial</td>
+            {% elif member.status == 1 %}
+                <td>Valid</td>
+            {% elif member.status == 2 %}
+                <td>Overdue</td>
+            {% elif member.status == 3 %}
+                <td>Frozen</td>
+            {% endif %}
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+</body>
+</html>

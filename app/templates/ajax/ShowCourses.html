@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>All courses</title>
+    <link rel="stylesheet" href="../../static/css/blog.css">
+    <link rel="Shortcut Icon" href="../../static/icon/index.ico" type="image/x-icon"/>
+</head>
+<body>
+<div class="card-group">
+    {% for course in course.items %}
+        {% if loop.first %}
+            {% for data in course %}
+                {% if loop.first %}
+                    <div class="card" id="post1">
+                        <img src="{{ data.courseProfile }}" class="card-img-top" id="coursecover"/>
+                        <div class="card-body">
+                            <p class="card-text">
+                                <small class="text-muted"># {{ data.name }}</small>
+                                <small class="text-muted">{{ data.start }} ~ {{ data.end }}</small>
+                            </p>
+                            <p class="card-text">
+                                {{ data.description }}
+                            </p>
+                            <p class="card-text">
+                                <video controls>
+                                    <source src="{{ data.video }}" type="video/mp4">
+                                </video>
+                            </p>
+                            <form action="/JoinCourse" method="post">
+                                <input id="dummy" name="choose" value="{{ data.id }}">
+                                {% else %}
+                                <input id="dummy" name="operator" value="{{ user.id }}">
+                                <input id="dummy" name="target" value="{{ data.cid }}">
+                                <hr>
+                                <h5 class="card-title">Course Instructor:
+                                    <img src="{{ data.cprofile }}" class="img-fluid my-5"/>
+                                    Name: {{ data.username }}
+                                </h5>
+                                <h5>Contact: {{ data.Email }}</h5>
+                                {% if user.status == 1 %}
+                                    <button id="delete" type="submit">Join</button>
+                                {% else %}
+                                    <h5>Your current membership is:
+                                        <i>
+                                            {% if user.status == 0 %}
+                                                Free trail.
+                                            {% elif user.status == 2 %}
+                                                Overdue.
+                                            {% elif user.status == 3 %}
+                                                Frozen.
+                                            {% endif %}
+                                        </i>
+                                        Contact manager to get membership!
+                                    </h5>
+                                {% endif %}
+                            </form>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        {% elif loop.index == 2 %}
+            {% for data in course %}
+                {% if loop.first %}
+                    <div class="card" id="post">
+                        <img src="{{ data.courseProfile }}" class="card-img-top" id="coursecover"/>
+                        <div class="card-body">
+                            <p class="card-text">
+                                <small class="text-muted"># {{ data.name }}</small>
+                                <small class="text-muted">{{ data.start }} ~ {{ data.end }}</small>
+                            </p>
+                            <p class="card-text">
+                                {{ data.description }}
+                            </p>
+                            <p class="card-text">
+                                <video controls>
+                                    <source src="{{ data.video }}" type="video/mp4">
+                                </video>
+                            </p>
+                            <form action="/JoinCourse" method="post">
+                                <input id="dummy" name="choose" value="{{ data.id }}">
+                                {% else %}
+                                <input id="dummy" name="operator" value="{{ user.id }}">
+                                <input id="dummy" name="target" value="{{ data.cid }}">
+                                <hr>
+                                <h5 class="card-title">Course Instructor:
+                                    <img src="{{ data.cprofile }}" class="img-fluid my-5"/>
+                                    Name: {{ data.username }}
+                                </h5>
+                                <h5>Contact: {{ data.Email }}</h5>
+                                {% if user.status == 1 %}
+                                    <button id="delete" type="submit">Join</button>
+                                {% else %}
+                                    <h5>Your current membership is:
+                                        <i>
+                                            {% if user.status == 0 %}
+                                                Free trail.
+                                            {% elif user.status == 2 %}
+                                                Overdue.
+                                            {% elif user.status == 3 %}
+                                                Frozen.
+                                            {% endif %}
+                                        </i>
+                                        Contact manager to get membership!
+                                    </h5>
+                                {% endif %}
+                            </form>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        {% elif loop.last %}
+            {% for data in course %}
+                {% if loop.first %}
+                    <div class="card" id="post">
+                        <img src="{{ data.courseProfile }}" class="card-img-top" id="coursecover"/>
+                        <div class="card-body">
+                            <p class="card-text">
+                                <small class="text-muted"># {{ data.name }}</small>
+                                <small class="text-muted">{{ data.start }} ~ {{ data.end }}</small>
+                            </p>
+                            <p class="card-text">
+                                {{ data.description }}
+                            </p>
+                            <p class="card-text">
+                                <video controls>
+                                    <source src="{{ data.video }}" type="video/mp4">
+                                </video>
+                            </p>
+                            <form action="/JoinCourse" method="post">
+                                <input id="dummy" name="choose" value="{{ data.id }}">
+                                {% else %}
+                                <input id="dummy" name="operator" value="{{ user.id }}">
+                                <input id="dummy" name="target" value="{{ data.cid }}">
+                                <hr>
+                                <h5 class="card-title">Course Instructor:
+                                    <img src="{{ data.cprofile }}" class="img-fluid my-5"/>
+                                    Name: {{ data.username }}
+                                </h5>
+                                <h5>Contact: {{ data.Email }}</h5>
+                                {% if user.status == 1 %}
+                                    <button id="delete" type="submit">Join</button>
+                                {% else %}
+                                    <h5>Your current membership is:
+                                        <i>
+                                            {% if user.status == 0 %}
+                                                Free trail.
+                                            {% elif user.status == 2 %}
+                                                Overdue.
+                                            {% elif user.status == 3 %}
+                                                Frozen.
+                                            {% endif %}
+                                        </i>
+                                        Contact manager to get membership!
+                                    </h5>
+                                {% endif %}
+                            </form>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    {% endfor %}
+</div>
+<div class="center-block">
+    {% for page_num in course.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+        {% if page_num %}
+            {% if course.page == page_num %}
+                <a class="btn btn-info mb-4" href="{{ url_for('ShowcourseInpage', page=page_num) }}">{{ page_num }}</a>
+            {% else %}
+                <a class="btn btn-outline-info mb-4"
+                   href="{{ url_for('ShowcourseInpage', page=page_num) }}">{{ page_num }}</a>
+            {% endif %}
+        {% else %}
+            ...
+        {% endif %}
+    {% endfor %}
+</div>
+</body>
+</html>

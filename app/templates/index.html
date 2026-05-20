@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+    <meta content="" name="description"/>
+    <meta content="" name="keywords"/>
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport"/>
+    <title>Workout Gym</title>
+    <link rel="Shortcut Icon" href="../static/icon/index.ico" type="image/x-icon"/>
+    <link href="../static/css/bootstrap-iso.css" media="screen" rel="stylesheet" type="text/css"/>
+    <link href="../static/css/bootstrap3.min.css" media="screen" rel="stylesheet" type="text/css"/>
+    <link href="../static/css/bootoast.css" media="screen" rel="stylesheet" type="text/css"/>
+    <link href="../static/css/bootstrap.addtabs.css" media="screen" rel="stylesheet" type="text/css"/>
+    <link href="../static/css/home.css" media="screen" rel="stylesheet" type="text/css"/>
+    <link href="../static/css/calender.css" media="screen" rel="stylesheet" type="text/css"/>
+    <link href="../static/css/font-awesome.min.css" media="screen" rel="stylesheet" type="text/css"/>
+    <script src="../static/js/jquery-3.6.1.min.js"></script>
+    <script src="../static/js/bootoast.js"></script>
+    <script src="../static/js/bootstrap.bundle.min.js"></script>
+    <script src="../static/js/bootstrap.js"></script>
+    <script src="../static/js/bootstrap.min.js"></script>
+    <script src="../static/js/jquery.slim.min.js"></script>
+</head>
+</html>
+<body>
+<div class="container" id="screen">
+    <div class="page-header">
+        <div class="row">
+            <div class="col-sm-10"></div>
+            <!-- weather api -->
+            <div class="weather">
+                <div id="he-plugin-standard"></div>
+            </div>
+        </div>
+        <!-- clock api -->
+        <div class="wrapper">
+            <div class="time__wrapper">
+                <span class="text__color" id="time"></span>
+                <span class="text__color" id="sec"></span>
+                <span class="text__color" id="med"></span>
+            </div>
+            <div class="day__wrapper">
+                <span class="text__color">SUN</span>
+                <span class="text__color">MON</span>
+                <span class="text__color">TUE</span>
+                <span class="text__color">WED</span>
+                <span class="text__color">THU</span>
+                <span class="text__color">FRI</span>
+                <span class="text__color">SAT</span>
+            </div>
+            <span class="text__color" id="full__date">
+                    </span>
+        </div>
+    </div>
+    <hr>
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <h1 id="title">
+                <i id="name">Workout</i> Gym
+                <small id="foot">
+                    Yifan Wang 2020110024 201487554
+                </small>
+                <button type="button" class="btn btn-info" data-bs-toggle="tooltip" data-bs-placement="top" id="logout"
+                        title="Log out?">
+                    <a id="logoutlink" href="{{ url_for("logout",role = man,user=user) }}">Log out </a>
+                </button>
+                {% for message in get_flashed_messages() %}
+                    <p id="msg">{{ message }}</p>
+                {% endfor %}
+            </h1>
+            <!-- user profile-->
+            <div class="col-sm-2">
+                {% if man == 'Admin' %}
+                    {% block managerProfile %}{% endblock %}
+                {% elif man == 'customer' %}
+                    {% block customerProfile %}{% endblock %}
+                {% elif man == 'coach' %}
+                    {% block coachProfile %}{% endblock %}
+                {% elif man == 'manager' %}
+                    {% block Profile %}{% endblock %}
+                {% endif %}
+            </div>
+            <div class="row">
+                <div class="col-sm-2">
+                    <ul class="list-group">
+                        <!-- function menu bar-->
+                        {% if man == 'Admin' %}
+                            {% block managermenu %}{% endblock %}
+                        {% elif man == 'customer' %}
+                            {% block customermenu %}{% endblock %}
+                        {% elif man == 'coach' %}
+                            {% block coachmenu %}{% endblock %}
+                        {% elif man == 'manager' %}
+                            {% block manager %}{% endblock %}
+                        {% endif %}
+                    </ul>
+                </div>
+                <div class="col-sm-7">
+                    <div>
+                        <!-- Nav tabs -->
+                        <ul class="nav nav-tabs" id="tabs1" role="tablist">
+                            <li class="active" role="presentation">
+                                <a aria-controls="home" data-toggle="tab" href="#home" role="tab">
+                                    <i class="glyphicon glyphicon-calendar">
+                                    </i>
+                                    Home
+                                </a>
+                            </li>
+                        </ul>
+                        <!-- Calender for display -->
+                        <div class="tab-content">
+                            <div class="tab-pane active" id="home1" role="tabpanel">
+                                <div class="container-fluid" id="showWindow">
+                                    <!--use bootstrap for the width of the page-->
+                                    <div class='ml-5' id="prevpost">
+                                        <a href="#" onclick="prev_month('prev')"><span
+                                                class='prev'>&#10094</span></a>
+                                        <p class="display-4" id='todays_date'></p>
+                                        <a href="#" onclick="next_month('next')"><span
+                                                style="margin-left:20px ;" class='next'>&#10095</span></a>
+                                    </div>
+                                    <div class='weekends'><!--showing weekdays navbar using css for styling-->
+                                        <div>Sun</div>
+                                        <div>Mon</div>
+                                        <div>Tue</div>
+                                        <div>Wed</div>
+                                        <div>Thu</div>
+                                        <div>Fri</div>
+                                        <div>Sat</div>
+                                    </div>
+                                    <div class='days'><!--showing days used css for styling-->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</body>
+<script src="https://widget.qweather.net/standard/static/js/he-standard-common.js?v=2.0"></script>
+<script src="../static/js/clock.js"></script>
+<script src="../static/js/calender.js"></script>
+<script src="../static/js/jquery.min.js"></script>
+<script type="text/javascript" src="../../static/js/echarts.min.js"></script>
+<script src="../static/js/bootstrap.addtabs.js"></script>
+<script type="text/javascript" src="../static/js/home.js"></script>

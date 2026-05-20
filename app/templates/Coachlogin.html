@@ -1,0 +1,73 @@
+{% extends "index.html" %}
+{% block coachmenu %}
+    <a class="list-group-item" data-addtab="Account" data-url="ShowCoachaccount">
+        <i class="glyphicon glyphicon-info-sign" id="icon"></i>Account
+    </a>
+    <a class="list-group-item" data-addtab="Coaches" data-url="ShowStudent">
+        <i class="glyphicon glyphicon-user" id="icon"></i>Students
+    </a>
+    <a class="list-group-item" data-addtab="My-Courses" data-url="ShowCoachcourse">
+        <i class="glyphicon glyphicon-book" id="icon"></i>My Courses
+    </a>
+    <a class="list-group-item" data-addtab="New-Courses" data-url="AddCourse">
+        <i class="glyphicon glyphicon-tag" id="icon"></i>New Courses
+    </a>
+    <a class="list-group-item" data-addtab="Shopping-links" data-url="../static/ajax/shoppinglinks.html">
+        <i class="glyphicon glyphicon-shopping-cart" id="icon"></i>Shopping links
+    </a>
+    <a class="list-group-item" id="closeAll">
+        <i class="glyphicon glyphicon-remove-circle" id="icon"></i>Close all tabs
+    </a>
+{% endblock %}
+
+{# coach profile#}
+{% block coachProfile %}
+    <section class="min-vh-100">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col-md-12 col-xl-4">
+                <div class="card" style="border-radius: 15px;">
+                    <div class="card-body text-center">
+                        <div class="mt-3 mb-4">
+                            <img id="profile" src="{{ role.cprofile }}" class="img-circle"/>
+                        </div>
+                        <h4 class="mb-2">{{ role.username }}</h4>
+                        <p class="text-light mb-4">@{{ man }} <span class="mx-2">|</span> <a
+                                id="email" href="mailto:{{ role.Email }}">{{ role.Email }}</a>
+                        </p>
+                    <hr>
+                        <div class="mb-4 pb-2">
+                        <i>Status:</i>
+                            <div class="row">
+                                <svg class="w-5 h-5" fill="#fff" weight="25" height="25"
+                                     viewBox="0 0 24 24">
+                                    <path fill-rule="evenodd"
+                                          d="M5.05 3.636a1 1 0 010 1.414 7 7 0 000 9.9 1 1 0 11-1.414 1.414 9 9 0 010-12.728 1 1 0 011.414 0zm9.9 0a1 1 0 011.414 0 9 9 0 010 12.728 1 1 0 11-1.414-1.414 7 7 0 000-9.9 1 1 0 010-1.414zM7.879 6.464a1 1 0 010 1.414 3 3 0 000 4.243 1 1 0 11-1.415 1.414 5 5 0 010-7.07 1 1 0 011.415 0zm4.242 0a1 1 0 011.415 0 5 5 0 010 7.072 1 1 0 01-1.415-1.415 3 3 0 000-4.242 1 1 0 010-1.415zM10 9a1 1 0 011 1v.01a1 1 0 11-2 0V10a1 1 0 011-1z"
+                                          clip-rule="evenodd"></path>
+                                </svg>
+                                Online
+                            </div>
+                        </div>
+                    <hr>
+                        <div class="d-flex justify-content-between text-center mt-5 mb-2">
+                            <i>Personal info:</i>
+                            <div>
+                                <p class="text-uppercase mb-0">Gender:
+                                    {% if role.sex == 0 %}
+                                        Unrevealed
+                                    {% elif role.sex == 1 %}
+                                        Male
+                                    {% elif role.sex == 2 %}
+                                        Female
+                                    {% endif %}
+                                </p>
+                            </div>
+                            <div class="px-3">
+                                <p class="text-uppercase mb-0"> Speciality: {{ role.speciality }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
