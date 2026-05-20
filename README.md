@@ -10,6 +10,14 @@ This application is a role-based gym management platform built with Flask. It in
 - Chinese (中文): [docs/README.zh-CN.md](docs/README.zh-CN.md)
 - Japanese (日本語): [docs/README.ja.md](docs/README.ja.md)
 
+## Open Source Docs
+
+- License: [LICENSE](LICENSE)
+- Contributing: [CONTRIBUTING.md](CONTRIBUTING.md)
+- Code of Conduct: [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
+- Security Policy: [SECURITY.md](SECURITY.md)
+- Changelog: [CHANGELOG.md](CHANGELOG.md)
+
 ## Why This Repository Exists
 
 This repository is intended for portfolio and learning purposes:
@@ -119,6 +127,12 @@ python -m pytest --cov=app --cov-config=configs/.coveragerc.full --cov-report=te
 
 Note: Some legacy tests may rely on specific seeded records. See language docs for troubleshooting and migration notes.
 
+## CI
+
+GitHub Actions runs tests automatically on pushes and pull requests to `main`.
+
+- Workflow file: [.github/workflows/tests.yml](.github/workflows/tests.yml)
+
 ## License
 
-Released for open-source portfolio usage. Add your preferred license file before public distribution.
+This project is licensed under the MIT License. See [LICENSE](LICENSE).
