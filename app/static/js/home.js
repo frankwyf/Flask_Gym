@@ -1,7 +1,15 @@
 $(function () {
     $('#closeAll').click(function () {
-        console.log('All tabs are closed');
         $.addtabs.closeAll('#tabs1');
+        bootoast({
+            message: "All tabs were closed.",
+            type: 'info',
+            position: 'top-center',
+            icon: 'glyphicon glyphicon-ok-circle',
+            timeout: 2,
+            dismissable: true,
+            animationDuration: 500,
+        });
     })
 })
 
@@ -21,14 +29,21 @@ WIDGET = {
 
 //remind the user of cookies policies
 window.addEventListener("load", function () {
-    // if no messages, show cookie policies
-    bootoast({
-        message: "Attention! this website uses cookies!",
-        type: 'danger',
-        position: 'top-center',
-        icon: 'glyphicon glyphicon-info-sign',
-        timeout: 5,
-        dismissable: true,
-        animationDuration: 1000,
-    });
+    var cookieNoticeKey = "workout_cookie_notice_at";
+    var now = Date.now();
+    var lastShown = Number(localStorage.getItem(cookieNoticeKey) || "0");
+    var oneWeek = 7 * 24 * 60 * 60 * 1000;
+
+    if (now - lastShown > oneWeek) {
+        bootoast({
+            message: "This site uses cookies to keep your session and preferences stable.",
+            type: 'warning',
+            position: 'top-center',
+            icon: 'glyphicon glyphicon-info-sign',
+            timeout: 6,
+            dismissable: true,
+            animationDuration: 700,
+        });
+        localStorage.setItem(cookieNoticeKey, String(now));
+    }
 });

@@ -7,12 +7,32 @@
     <link rel="Shortcut Icon" href="../../static/icon/index.ico" type="image/x-icon"/>
 </head>
 <body>
+<div class="ui-stats">
+    <div class="ui-stat">Visible on page<b data-ui-visible-count=".ui-filter-item">{{ course.items|length }}</b><span>Courses</span></div>
+    <div class="ui-stat">Membership<b>{% if user.status == 1 %}Active{% else %}Limited{% endif %}</b><span>Status</span></div>
+    <div class="ui-stat">Instructor cards<b data-ui-count=".ui-filter-item">0</b><span>Loaded</span></div>
+</div>
+<div class="ui-toolbar ui-toolbar-left">
+    <div class="ui-control-group">
+        <select class="ui-select" data-ui-sort data-ui-target=".ui-filter-item" aria-label="Sort course cards">
+            <option value="time-desc">Newest first</option>
+            <option value="time-asc">Earliest first</option>
+            <option value="name-asc">Name A-Z</option>
+            <option value="name-desc">Name Z-A</option>
+        </select>
+        <button class="ui-btn-secondary" data-ui-density-target=".card-group" type="button">Toggle compact</button>
+        <button class="ui-btn-secondary" data-ui-reset-filter type="button">Reset filter</button>
+    </div>
+</div>
+<input class="ui-search" data-ui-filter=".ui-filter-item" placeholder="Search course, coach, or keyword..." type="text"/>
+<div class="ui-kbd-hint">Tip: press / to focus search, Esc to clear.</div>
+<div class="ui-empty">No course matches your search on this page.</div>
 <div class="card-group">
     {% for course in course.items %}
         {% if loop.first %}
             {% for data in course %}
                 {% if loop.first %}
-                    <div class="card" id="post1">
+                    <div class="card ui-filter-item" data-search="{{ data.name }} {{ data.description }} {{ data.username }} {{ data.Email }}" data-sort-name="{{ data.name }}" data-sort-time="{{ data.start.isoformat() if data.start else '' }}" id="post1">
                         <img src="{{ data.courseProfile }}" class="card-img-top" id="coursecover"/>
                         <div class="card-body">
                             <p class="card-text">
@@ -62,7 +82,7 @@
         {% elif loop.index == 2 %}
             {% for data in course %}
                 {% if loop.first %}
-                    <div class="card" id="post">
+                    <div class="card ui-filter-item" data-search="{{ data.name }} {{ data.description }} {{ data.username }} {{ data.Email }}" data-sort-name="{{ data.name }}" data-sort-time="{{ data.start.isoformat() if data.start else '' }}" id="post">
                         <img src="{{ data.courseProfile }}" class="card-img-top" id="coursecover"/>
                         <div class="card-body">
                             <p class="card-text">
@@ -112,7 +132,7 @@
         {% elif loop.last %}
             {% for data in course %}
                 {% if loop.first %}
-                    <div class="card" id="post">
+                    <div class="card ui-filter-item" data-search="{{ data.name }} {{ data.description }} {{ data.username }} {{ data.Email }}" data-sort-name="{{ data.name }}" data-sort-time="{{ data.start.isoformat() if data.start else '' }}" id="post">
                         <img src="{{ data.courseProfile }}" class="card-img-top" id="coursecover"/>
                         <div class="card-body">
                             <p class="card-text">
@@ -176,5 +196,6 @@
         {% endif %}
     {% endfor %}
 </div>
+<script type="text/javascript" src="../../static/js/ui-enhance.js"></script>
 </body>
 </html>

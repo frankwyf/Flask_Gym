@@ -7,11 +7,13 @@
     <title>Login</title>
     <link rel="stylesheet" href="../static/css/login.css">
     <link rel="stylesheet" href="../static/css/bootstrap.css">
+    <link rel="stylesheet" href="../static/css/modern-ui.css">
     <link rel="Shortcut Icon" href="../static/icon/login.ico" type="image/x-icon"/>
 </head>
 <body>
 <div class="container">
     <h1 id="welcome"> Welcome to Workout!</h1>
+    <p class="login-subtitle">Your personalized fitness workspace starts here.</p>
     {% for message in get_flashed_messages() %}
         <!--info box-->
         <div class="alert alert-info" role="alert" id="info">
@@ -21,20 +23,24 @@
     <form action="/CustomerLogin" method="post" id="form">
         <div class="username-section">
             {% if username %}
-                <input type="text" class="username-text" id=username name="name" placeholder="Username"
+                  <input type="text" class="username-text" id=username name="name" placeholder="Username" aria-label="Username"
+                      autocomplete="username" required
                        value={{ username }}>
             {% else %}
-                <input type="text" class="username-text" id=username name="name" placeholder="Username">
+                  <input type="text" class="username-text" id=username name="name" placeholder="Username" aria-label="Username"
+                      autocomplete="username" required>
             {% endif %}
             <img src="../static/img/username.png" alt="Username">
             <div class="error-message"></div>
         </div>
         <div class="password-section">
             {% if password %}
-                <input type="password" class="password-text" id=password name="psw" placeholder="Password"
+                  <input type="password" class="password-text" id=password name="psw" placeholder="Password" aria-label="Password"
+                      autocomplete="current-password" required
                        value={{ password }}>
             {% else %}
-                <input type="password" class="password-text" id=password name="psw" placeholder="Password">
+                  <input type="password" class="password-text" id=password name="psw" placeholder="Password" aria-label="Password"
+                      autocomplete="current-password" required>
             {% endif %}
             <img src="../static/img/password.png" alt="Password">
             <div class="error-message"></div>
@@ -115,7 +121,9 @@
 </div>
 <script src="../static/js/jquery.min.js"></script>
 <script src="../static/js/login.js"></script>
+<script src="../static/js/form-enhance.js"></script>
 <script type="text/javascript" src="../static/js/bootstrap.js"></script>
+<script type="text/javascript" src="../static/js/ui-enhance.js"></script>
 </body>
 
 </html>
