@@ -184,6 +184,7 @@ class Coach(db.Model, UserMixin):
     Email = db.Column(db.String(200), nullable=False)
     speciality = db.Column(db.String(200))  # speciality at teaching
     sex = db.Column(db.Integer)  # 0 for unknown, 1 for male and 2 for female
+    is_public_seed = db.Column(db.Integer, default=0)
 
     def __int__(self, username, Email, password, cprofile, speciality, sex):
         self.username = username
@@ -231,6 +232,7 @@ class Course(db.Model):
     start = db.Column(db.DateTime)  # start time of the course
     end = db.Column(db.DateTime)  # end time of the course
     video = db.Column(db.String(200))  # store the file oath for potential video of the course
+    is_public_seed = db.Column(db.Integer, default=0)
 
     def __int__(self, name, description, courseProfile, start, end, video):
         self.name = name

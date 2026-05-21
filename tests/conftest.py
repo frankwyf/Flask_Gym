@@ -1,9 +1,15 @@
 from datetime import datetime
+import os
+from pathlib import Path
 import warnings
 
 import pytest
 
 warnings.filterwarnings("ignore")
+
+# Keep pytest isolated from the developer database file.
+TEST_DB_PATH = Path(__file__).resolve().parent / ".pytest_flask_gym.db"
+os.environ["DATABASE_URL"] = f"sqlite:///{TEST_DB_PATH.as_posix()}"
 
 from app import app, bcrypt, db
 from app.model import Coach, Customer, Health, Manager

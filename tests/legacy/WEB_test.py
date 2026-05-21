@@ -34,11 +34,11 @@ with app.app_context():
                 coach.sex = 0
                 db.session.add(coach)
 
-            customer = model.Customer.query.filter_by(username='DemoUser').first()
+            customer = model.Customer.query.filter_by(username='demo_user_legacy').first()
             if not customer:
                 customer = model.Customer()
-                customer.username = 'DemoUser'
-                customer.password = generate_password_hash('DemoUser66')
+                customer.username = 'demo_user_legacy'
+                customer.password = generate_password_hash('LegacyCustomer66')
                 customer.profile = '../static/customerProfile/default_none.jpg'
                 customer.Email = 'customer@example.com'
                 customer.status = 1
@@ -97,7 +97,7 @@ with app.app_context():
                 response = self.client.get('/Showdata', follow_redirects=True)  # managers can view management data
                 self.assertEqual(response.status_code, 200)
                 session['role'] = 'customer'
-                customer = model.Customer.query.filter_by(username="DemoUser").first()
+                customer = model.Customer.query.filter_by(username="demo_user_legacy").first()
                 login_user(customer, remember=True)
                 response = self.client.get('/ShowMyCourse',
                                            follow_redirects=True)  # members cna view their chosen courses
@@ -117,7 +117,7 @@ with app.app_context():
                 response = self.client.get('/Manageraccount')  # login to view or update profile
                 self.assertEqual(response.status_code, 302)
                 session['role'] = 'customer'
-                customer = model.Customer.query.filter_by(username="DemoUser").first()
+                customer = model.Customer.query.filter_by(username="demo_user_legacy").first()
                 login_user(customer, remember=True)
                 response = self.client.get('/Showaccount')  # login to view or update profile
                 self.assertEqual(response.status_code, 302)

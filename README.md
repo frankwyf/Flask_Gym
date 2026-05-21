@@ -1,6 +1,6 @@
 # Flask Gym Platform
 
-Portfolio-ready open-source refactor of a university coursework project.
+Portfolio-ready open-source refactor of a legacy monolithic demo project.
 
 This application is a role-based gym management platform built with Flask. It includes customer, coach, and manager workflows for account management, course publishing, and booking.
 
@@ -68,6 +68,8 @@ At minimum, set a strong `SECRET_KEY`.
 python scripts/db_create.py
 ```
 
+This command now also seeds a default public catalog (coaches + free courses) so brand-new users do not land on empty pages.
+
 ### 5. Run application
 
 ```powershell
@@ -75,6 +77,21 @@ python run.py
 ```
 
 Open: `http://127.0.0.1:5000`
+
+## Default Public Catalog
+
+Public demo coaches/courses are managed in one place: [app/public_catalog.py](app/public_catalog.py).
+
+- `PUBLIC_MEDIA_RENAMES`: maps legacy uploaded media to clean system-facing names.
+- `PUBLIC_COACHES`: default public coach identities and avatars.
+- `PUBLIC_COURSES`: default free public course cards and videos.
+- `bootstrap_public_catalog(...)`: idempotent bootstrap function called at app startup and during `scripts/db_create.py`.
+
+Design goals:
+
+- Keep seed logic out of app startup boilerplate.
+- Make media naming predictable and maintainable.
+- Allow safe repeated execution without duplicate rows.
 
 ## Environment Variables
 

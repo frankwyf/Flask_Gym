@@ -28,6 +28,11 @@ migrate = Migrate(app, db)  # database migration
 login_manager = LoginManager(app)  # the login manager that manager the log in session
 
 
+def create_app():
+    # Keep compatibility for scripts that import an app factory.
+    return app
+
+
 # create the log file automatically
 def make_dir(make_dir_path):
     path = make_dir_path.strip()
@@ -54,3 +59,7 @@ file_log_handler.setFormatter(formatter)
 logging.getLogger().addHandler(file_log_handler)
 
 from app import routes, forms
+from app.public_catalog import bootstrap_public_catalog
+
+with app.app_context():
+    bootstrap_public_catalog(app, db, bcrypt)

@@ -438,7 +438,13 @@ def newCoach():  # sign up route for customers
         # validate user's message
         newname = request.form.get("name")
         mail = request.form.get("mailenter")
-        gender = request.values.getlist('gender')
+        gender_raw = request.form.get('gender', '0')
+        try:
+            gender = int(gender_raw)
+        except (TypeError, ValueError):
+            gender = 0
+        if gender not in (0, 1, 2):
+            gender = 0
         # encrypt the password
         hashed_psw = bcrypt.generate_password_hash(request.form.get("psw")).decode('utf-8')
         # validate inputs in data base
@@ -453,11 +459,11 @@ def newCoach():  # sign up route for customers
         user.password = hashed_psw
         user.Email = mail
         user.sex = gender
-        if gender[0] == '0':  # unknown sex
+        if gender == 0:  # unknown sex
             user.cprofile = "../static/coachProfile/default_none.jpg"
-        if gender[0] == '1':  # male
+        if gender == 1:  # male
             user.cprofile = "../static/coachProfile/default_male.jpg"
-        if gender[0] == '2':  # female
+        if gender == 2:  # female
             user.cprofile = "../static/coachProfile/default_female.jpg"
         user.speciality = "all"  # default value
         try:
@@ -487,7 +493,6 @@ def newManager():  # sign up route for manager
         # validate user's message
         newname = request.form.get("name")
         mail = request.form.get("mailenter")
-        gender = request.values.getlist('gender')
         # encrypt the password
         hashed_psw = bcrypt.generate_password_hash(request.form.get("psw")).decode('utf-8')
         # validate inputs in data base
@@ -529,7 +534,14 @@ def newAccount():  # sign up route for customers
         newname = request.form.get("name")
         mail = request.form.get("mailenter")
         psw = request.form.get('psw')
-        gender = request.values.getlist('gender')
+        # Radio input is a single value; coerce safely to int for DB storage.
+        gender_raw = request.form.get('gender', '0')
+        try:
+            gender = int(gender_raw)
+        except (TypeError, ValueError):
+            gender = 0
+        if gender not in (0, 1, 2):
+            gender = 0
         # encrypt the password
         hashed_psw = bcrypt.generate_password_hash(
             request.form.get("psw")).decode('utf-8')
@@ -548,11 +560,11 @@ def newAccount():  # sign up route for customers
         user.status = 0  # 0 represents trail user
         user.log = 0  # 0 for offline since it's just registration now
         user.sex = gender
-        if gender[0] == '0':  # unknown sex
+        if gender == 0:  # unknown sex
             user.profile = "../static/customerProfile/default_none.jpg"
-        if gender[0] == '1':  # male
+        if gender == 1:  # male
             user.profile = "../static/customerProfile/default_male.jpg"
-        if gender[0] == '2':  # female
+        if gender == 2:  # female
             user.profile = "../static/customerProfile/default_female.jpg"
         user.posts = 0  # no posts send yet
         try:
@@ -803,9 +815,11 @@ def ShowManager():
 def ShowCoach():
     if request.method == 'GET':
         if session.get('role') == 'customer':
-            my_coach = Coach.query.join(Connect, Coach.cid == Connect.cid) \
-                .join(Customer, Connect.id == current_user.id).all()
+            my_coach = Coach.query.order_by(Coach.cid).all()
             return render_template("ajax/ShowCoaches.html", members=my_coach)
+        if session.get('role') == 'Manager':
+            all_coaches = Coach.query.order_by(Coach.cid).all()
+            return render_template("ajax/ShowCoaches.html", members=all_coaches)
         if session.get('role') != 'Manager':
             flash("Illegal visit. (Higher authentications required.)", 'info')
             return redirect(url_for('CustomerLogin'))

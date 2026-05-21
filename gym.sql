@@ -35,8 +35,8 @@ CREATE TABLE `coach` (
 -- Records of coach
 -- ----------------------------
 INSERT INTO `coach` VALUES ('1', 'Coach', '$2b$12$raojK3XvkkXqnh3x.3mzPekjjo5sgn0b3KG52d/8PFsNpkiQNN5gm', '../static/coachProfile/default_none.jpg', 'coach1@example.com', 'all', '0');
-INSERT INTO `coach` VALUES ('2', 'Tommy', '$2b$12$JFF86F97Xgcl02KgqeP5kerRRD1bK2iB6xf7kdKnjSm3pF95vhmwy', '../static/coachProfile/default_male.jpg', 'coach2@example.com', 'strength', '1');
-INSERT INTO `coach` VALUES ('3', 'Jenny', '$2b$12$hf8zj8lfm8sagM6fy3yhSO7GQuHBAnwWbBdCUIJ5FVBj97jXzrB0y', '../static/coachProfile/default_female.jpg', 'coach3@example.com', 'yoga', '2');
+INSERT INTO `coach` VALUES ('2', 'coach_alpha', '$2b$12$JFF86F97Xgcl02KgqeP5kerRRD1bK2iB6xf7kdKnjSm3pF95vhmwy', '../static/coachProfile/default_male.jpg', 'coach2@example.com', 'strength', '1');
+INSERT INTO `coach` VALUES ('3', 'coach_beta', '$2b$12$hf8zj8lfm8sagM6fy3yhSO7GQuHBAnwWbBdCUIJ5FVBj97jXzrB0y', '../static/coachProfile/default_female.jpg', 'coach3@example.com', 'yoga', '2');
 INSERT INTO `coach` VALUES ('6', 'test', '$2b$12$VpcF2ZwYC4asrmJ4ecScweFNGSz09LbYKTB2zgylcn/L3TaSi.s96', '../static/coachProfile/test.jpg', 'coach4@example.com', 'fitting', '1');
 
 -- ----------------------------
@@ -88,10 +88,10 @@ CREATE TABLE `course` (
 -- Records of course
 -- ----------------------------
 INSERT INTO `course` VALUES ('1', '1', 'Fitting overall', 'This is a course for all members! Join me to experience the fun of gym exercises and get MUSCLES!', '../static/Course/cover/Coach20221217_204532.jpg', '2022-12-17 20:44:12', '2022-12-17 22:00:12', '../static/Course/video/_Compressed_Coach20221217_204532.mp4');
-INSERT INTO `course` VALUES ('2', '2', 'Strength class', 'Join me to work on your strength! This course is for those who want to improve on their strength.', '../static/Course/cover/Tommy20221217_204850.jpg', '2022-12-18 10:45:12', '2022-12-18 12:45:12', '../static/Course/video/_Compressed_Tommy20221217_204850.mp4');
-INSERT INTO `course` VALUES ('3', '2', 'Mobile cycle', 'This is a course for mobile cycling: the most popular after-work exercise! So the time period is set after work. Don\'t forget to come after work!', '../static/Course/cover/Tommy20221217_205244.jpg', '2022-12-19 20:30:12', '2022-12-19 21:45:12', '../static/Course/video/Tommy20221217_205244.mp4');
-INSERT INTO `course` VALUES ('4', '3', 'Swimming junior', 'Want to go to the beach with friends at summer? Join me this winter holiday! Here we will teach basic skills of swimming. ', '../static/Course/cover/Jenny20221217_205454.jpg', '2022-12-18 15:45:12', '2022-12-18 17:45:12', '../static/Course/video/_Compressed_Jenny20221217_205454.mp4');
-INSERT INTO `course` VALUES ('5', '3', 'Yoga master', 'Want to improve your yoga? Join me here. We will help you to grow higher skills of yoga and relax yourself after a long day of working.', '../static/Course/cover/Jenny20221217_205854.jpg', '2022-12-20 20:00:12', '2022-12-20 22:00:12', '../static/Course/video/_Compressed_Jenny20221217_205854.mp4');
+INSERT INTO `course` VALUES ('2', '2', 'Strength class', 'Join me to work on your strength! This course is for those who want to improve on their strength.', '../static/Course/cover/coach_alpha_20221217_204850.jpg', '2022-12-18 10:45:12', '2022-12-18 12:45:12', '../static/Course/video/_Compressed_coach_alpha_20221217_204850.mp4');
+INSERT INTO `course` VALUES ('3', '2', 'Mobile cycle', 'This is a course for mobile cycling: the most popular after-work exercise! So the time period is set after work. Don\'t forget to come after work!', '../static/Course/cover/coach_alpha_20221217_205244.jpg', '2022-12-19 20:30:12', '2022-12-19 21:45:12', '../static/Course/video/coach_alpha_20221217_205244.mp4');
+INSERT INTO `course` VALUES ('4', '3', 'Swimming junior', 'Want to go to the beach with friends at summer? Join me this winter holiday! Here we will teach basic skills of swimming. ', '../static/Course/cover/coach_beta_20221217_205454.jpg', '2022-12-18 15:45:12', '2022-12-18 17:45:12', '../static/Course/video/_Compressed_coach_beta_20221217_205454.mp4');
+INSERT INTO `course` VALUES ('5', '3', 'Yoga master', 'Want to improve your yoga? Join me here. We will help you to grow higher skills of yoga and relax yourself after a long day of working.', '../static/Course/cover/coach_beta_20221217_205854.jpg', '2022-12-20 20:00:12', '2022-12-20 22:00:12', '../static/Course/video/_Compressed_coach_beta_20221217_205854.mp4');
 
 -- ----------------------------
 -- Table structure for customer
@@ -117,7 +117,7 @@ CREATE TABLE `customer` (
 INSERT INTO `customer` VALUES ('8', 'demo', '$2b$12$OTBnXFYSzYvjmxoHV4FSVu9gJ5tQ1/RXZ3ewF91Rtl8VsMTnviqpi', '../static/customerProfile/default_none.jpg', 'customer1@example.com', '1', '0', '0', '0');
 INSERT INTO `customer` VALUES ('9', 'Female', '$2b$12$u6uXzkssfEP1YKocMEKCwOi0WxbKqVGo3sMkE86/1l4HHVTV.AfS2', '../static/customerProfile/default_female.jpg', 'customer2@example.com', '0', '0', '2', '0');
 INSERT INTO `customer` VALUES ('13', 'test', '$2b$12$UzQirhqtyx9Yy60vjMq5vOOCes80VU6gGn7PVA3XkD8VriKWZtntK', '../static/customerProfile/default_male.jpg', 'customer3@example.com', '1', '0', '1', '2');
-INSERT INTO `customer` VALUES ('15', 'DemoUser', '$2b$12$EvdvjI0hVDeHlFyPcskKIeQX0rMg3VGyRUBnk2ExD68g9GCUOq9k2', '../static/customerProfile/DemoUser.jpeg', 'customer4@example.com', '1', '0', '1', '2');
+INSERT INTO `customer` VALUES ('15', 'demo_user', '$2b$12$EvdvjI0hVDeHlFyPcskKIeQX0rMg3VGyRUBnk2ExD68g9GCUOq9k2', '../static/customerProfile/demo_user.jpeg', 'customer4@example.com', '1', '0', '1', '2');
 
 -- ----------------------------
 -- Table structure for health
@@ -182,5 +182,5 @@ CREATE TABLE `post` (
 -- ----------------------------
 INSERT INTO `post` VALUES ('1', '13', '../static/post/test20221216_193109.jpg', 'Hello everyone! this is my first day at workout gym.', 'first');
 INSERT INTO `post` VALUES ('2', '13', '../static/post/test20221216_193246.jpg', 'This is my second day at workout gym. This is a test of 200 charatcer up limit of the blog. AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb', 'Daily');
-INSERT INTO `post` VALUES ('3', '15', '../static/post/DemoUser20221216_193331.jpg', 'I am posting a blog.', 'first');
-INSERT INTO `post` VALUES ('6', '15', '../static/post/DemoUser20221217_104537.jpeg', 'Good night everyone! Work hard tomorrow.', 'Night');
+INSERT INTO `post` VALUES ('3', '15', '../static/post/demo_user_20221216_193331.jpg', 'I am posting a blog.', 'first');
+INSERT INTO `post` VALUES ('6', '15', '../static/post/demo_user_20221217_104537.jpeg', 'Good night everyone! Work hard tomorrow.', 'Night');

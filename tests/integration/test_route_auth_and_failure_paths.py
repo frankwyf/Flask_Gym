@@ -1,4 +1,4 @@
-from app.model import Manager
+from app.model import Customer, Manager
 
 
 def test_customer_login_failure_paths(client, seeded_users):
@@ -56,3 +56,22 @@ def test_logout_for_manager_role(client, seeded_users):
 
     refreshed = Manager.query.filter_by(username=manager.username).first()
     assert refreshed.log == 0
+
+
+def test_new_account_registration_accepts_gender_scalar(client):
+    response = client.post(
+        "/newAccount",
+        data={
+            "name": "new_customer_scalar_gender",
+            "mailenter": "new_customer_scalar_gender@example.com",
+            "psw": "CustomerPass66",
+            "gender": "1",
+        },
+        follow_redirects=True,
+    )
+    assert response.status_code == 200
+
+    created = Customer.query.filter_by(username="new_customer_scalar_gender").first()
+    assert created is not None
+    assert created.sex == 1
+    assert created.profile == "../static/customerProfile/default_male.jpg"
