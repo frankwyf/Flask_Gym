@@ -8,7 +8,6 @@
     <link rel="Shortcut Icon" href="../../static/icon/index.ico" type="image/x-icon"/>
 </head>
 <body id="inpage">
-<a class="btn btn-outline-info mb-4" id="back" href="{{ url_for('CustomerLogin') }}">Go back to homepage</a>
 <div class="card-group">
     {% for post in posts.items %}
         {% if loop.first %}
@@ -69,9 +68,11 @@
     {% for page_num in posts.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
     {% if page_num %}
         {% if posts.page == page_num %}
-            <a class="btn btn-info mb-4" href="{{ url_for('ShowblogInpage', page=page_num) }}">{{ page_num }}</a>
+            <a class="btn btn-info mb-4" data-addtab="Post-blog"
+               data-url="Showblog?page={{ page_num }}" href="{{ url_for('Showblog', page=page_num) }}">{{ page_num }}</a>
         {% else %}
-            <a class="btn btn-outline-info mb-4" href="{{ url_for('ShowblogInpage', page=page_num) }}">{{ page_num }}</a>
+            <a class="btn btn-outline-info mb-4" data-addtab="Post-blog"
+               data-url="Showblog?page={{ page_num }}" href="{{ url_for('Showblog', page=page_num) }}">{{ page_num }}</a>
         {% endif %}
     {% else %}
         ...

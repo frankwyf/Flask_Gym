@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
 </head>
 <body id="inpage">
-<a class="btn btn-outline-info mb-4" id="back" href="{{ url_for('CustomerLogin') }}">Go back to homepage</a>
 <div class="card-group">
     {% for course in course.items %}
         {% if loop.first %}
@@ -167,10 +166,11 @@
     {% for page_num in course.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
         {% if page_num %}
             {% if course.page == page_num %}
-                <a class="btn btn-info mb-4" href="{{ url_for('ShowcourseInpage', page=page_num) }}">{{ page_num }}</a>
+                <a class="btn btn-info mb-4" data-addtab="New-Courses"
+                   data-url="ShowAllCourse?page={{ page_num }}" href="{{ url_for('ShowAllCourse', page=page_num) }}">{{ page_num }}</a>
             {% else %}
-                <a class="btn btn-outline-info mb-4"
-                   href="{{ url_for('ShowcourseInpage', page=page_num) }}">{{ page_num }}</a>
+                <a class="btn btn-outline-info mb-4" data-addtab="New-Courses"
+                   data-url="ShowAllCourse?page={{ page_num }}" href="{{ url_for('ShowAllCourse', page=page_num) }}">{{ page_num }}</a>
             {% endif %}
         {% else %}
             ...

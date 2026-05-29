@@ -7,6 +7,9 @@
     <link rel="Shortcut Icon" href="../../static/icon/index.ico" type="image/x-icon"/>
 </head>
 <body>
+<div class="ui-toolbar ui-toolbar-left">
+    <a class="btn btn-outline-info" href="{{ url_for('CustomerLogin') }}">Back to Dashboard</a>
+</div>
 <div class="ui-stats">
     <div class="ui-stat">Visible on page<b data-ui-visible-count=".ui-filter-item">{{ course.items|length }}</b><span>My Courses</span></div>
     <div class="ui-stat">Profile<b>{{ user.username }}</b><span>Member</span></div>
@@ -96,10 +99,12 @@
     {% for page_num in course.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
         {% if page_num %}
             {% if course.page == page_num %}
-                <a class="btn btn-info mb-4" href="{{ url_for('ShowMycourseInpage', page=page_num) }}">{{ page_num }}</a>
+                <a class="btn btn-info mb-4" data-addtab="My-Courses"
+                   data-url="ShowMycourse?page={{ page_num }}" href="{{ url_for('ShowMycourse', page=page_num) }}">{{ page_num }}</a>
             {% else %}
                 <a class="btn btn-outline-info mb-4"
-                   href="{{ url_for('ShowMycourseInpage', page=page_num) }}">{{ page_num }}</a>
+                   data-addtab="My-Courses" data-url="ShowMycourse?page={{ page_num }}"
+                   href="{{ url_for('ShowMycourse', page=page_num) }}">{{ page_num }}</a>
             {% endif %}
         {% else %}
             ...

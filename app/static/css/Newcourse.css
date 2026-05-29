@@ -27,3 +27,30 @@
         margin-left: 18%;
     }
 }
+
+/* Responsive new-course card */
+.card.mb-3 {
+    width: min(100%, 920px);
+    margin: 14px auto;
+}
+
+#cprofile {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+}
+
+.col-md-8 {
+    margin-left: 0;
+    text-align: left;
+}
+
+@media (max-width: 992px) {
+    .card.mb-3 {
+        padding: 8px;
+    }
+
+    .col-md-8 {
+        text-align: center;
+    }
+}

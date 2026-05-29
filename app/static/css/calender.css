@@ -53,3 +53,67 @@
         margin-left: 13%;
     }
 }
+
+/* Responsive calendar layout */
+.weekends {
+    width: 100%;
+    max-width: 100%;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.weekends div {
+    font-size: clamp(12px, 1.8vw, 18px);
+    padding: 8px 2px;
+}
+
+.days {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(34px, 1fr));
+    width: 100%;
+    border-left: 1px solid rgba(0, 0, 0, 0.2);
+    border-top: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.days div {
+    width: auto;
+    min-height: 64px;
+    padding: 10px 4px;
+    border-right: 1px solid rgba(0, 0, 0, 0.15);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+    font-size: clamp(12px, 1.6vw, 18px);
+}
+
+#prevpost {
+    width: 100%;
+    margin: 0 0 10px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+#todays_date {
+    margin-left: 0;
+}
+
+@media (max-width: 768px) {
+    .days {
+        grid-template-columns: repeat(7, minmax(30px, 1fr));
+    }
+
+    .days div {
+        min-height: 52px;
+    }
+}
+
+@media (max-width: 480px) {
+    .weekends div {
+        font-size: 11px;
+    }
+
+    .days div {
+        min-height: 42px;
+        font-size: 12px;
+        padding: 6px 2px;
+    }
+}

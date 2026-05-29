@@ -837,8 +837,7 @@ def Showblog():
 @app.route('/ShowblogInpage', methods=['POST', 'GET'])
 def ShowblogInpage():  # separate page for blog display
     page = request.args.get('page', 1, type=int)
-    posts = Post.query.order_by(Post.id.desc()).paginate(page=page, per_page=3)
-    return render_template("ajax/blogInpage.html", user=current_user, posts=posts)
+    return redirect(url_for('Showblog', page=page))
 
 
 def save_post_picture(form_picture):
@@ -1198,9 +1197,7 @@ def ShowAllCourse():
 @app.route('/ShowcourseInpage', methods=['GET'])
 def ShowcourseInpage():  # separate page for course display
     page = request.args.get('page', 1, type=int)
-    all_courses = db.session.query(Course, Coach).join(Course, Coach.cid == Course.cid) \
-        .order_by(Course.start).paginate(page=page, per_page=3)
-    return render_template("ajax/CourseInpage.html", user=current_user, course=all_courses)
+    return redirect(url_for('ShowAllCourse', page=page))
 
 
 @app.route('/JoinCourse', methods=['POST'])
@@ -1275,15 +1272,9 @@ def ShowStudent():
 @app.route('/ShowMycourseInpage', methods=['GET'])
 def ShowMycourseInpage():  # separate page for my_course display
     if request.method == "GET":
-        if session.get('role') != 'customer':
-            return render_template('error.html', errormessage="Only gym customers can access this page!")
-        else:
-            page = request.args.get('page', 1, type=int)
-            my_courses = Course.query.join(Connect, Course.id == Connect.courseid) \
-                .join(Customer, Connect.id == current_user.id).paginate(page=page, per_page=3)
-            return render_template("ajax/MyCoursesInpage.html", user=current_user, course=my_courses)
-    else:
-        return render_template('error.html', errormessage="Invalid operation!")
+        page = request.args.get('page', 1, type=int)
+        return redirect(url_for('ShowMycourse', page=page))
+    return render_template('error.html', errormessage="Invalid operation!")
 
 
 @app.route('/ShowCoachcourse', methods=['GET'])
@@ -1303,6 +1294,4 @@ def ShowCoachcourse():
 @app.route('/ShowCoachcourseInpage', methods=['GET'])
 def ShowCoachcourseInpage():  # separate page for my_course display
     page = request.args.get('page', 1, type=int)
-    coach_courses = Course.query.filter_by(cid=current_user.cid).order_by(Course.start) \
-        .paginate(page=page, per_page=3)
-    return render_template("ajax/MyCoursesInpage.html", user=current_user, course=coach_courses)
+    return redirect(url_for('ShowCoachcourse', page=page))

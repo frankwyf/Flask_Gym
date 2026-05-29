@@ -1,0 +1,252 @@
+/* Global responsive and visual refresh layer */
+:root {
+    --ui-bg: #0a2233;
+    --ui-bg-soft: #102f45;
+    --ui-surface: rgba(255, 255, 255, 0.1);
+    --ui-surface-strong: rgba(255, 255, 255, 0.16);
+    --ui-border: rgba(255, 255, 255, 0.2);
+    --ui-accent: #f97316;
+    --ui-accent-2: #22c55e;
+    --ui-text: #ecf6ff;
+    --ui-muted: #bcd2e5;
+    --ui-shadow: 0 20px 42px rgba(0, 0, 0, 0.3);
+}
+
+body {
+    font-family: "Segoe UI", "Trebuchet MS", Arial, sans-serif;
+}
+
+#screen {
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 10px 12px 22px;
+}
+
+.ui-shell {
+    border-radius: 20px;
+}
+
+.ui-page-subtitle {
+    margin: 4px auto 8px;
+    text-align: center;
+    color: var(--ui-muted);
+    font-size: 13px;
+    letter-spacing: 0.2px;
+}
+
+.page-header {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: flex-start;
+}
+
+.page-header .row {
+    width: 100%;
+    margin: 0;
+}
+
+.weather {
+    margin-left: auto;
+    min-width: 260px;
+}
+
+.wrapper {
+    float: none;
+    margin: 0;
+    max-width: 420px;
+    width: min(100%, 420px);
+    background: rgba(191, 248, 229, 0.92);
+    box-shadow: 0 10px 24px rgba(12, 48, 64, 0.25);
+}
+
+.panel,
+.panel-default,
+.panel-body {
+    border-radius: 18px;
+    border: 1px solid var(--ui-border);
+}
+
+.panel-body {
+    overflow: visible;
+}
+
+#title {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 8px;
+}
+
+#logout {
+    margin-left: 0;
+    white-space: nowrap;
+}
+
+#logoutlink {
+    display: inline-block;
+    padding: 2px 2px;
+}
+
+.app-layout {
+    margin: 0;
+    display: grid;
+    grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
+    gap: 14px;
+}
+
+.app-layout > .app-menu-col,
+.app-layout > .app-content-col {
+    float: none;
+    width: auto;
+    padding: 0;
+}
+
+.list-group {
+    position: sticky;
+    top: 8px;
+    max-height: calc(100vh - 140px);
+    overflow: auto;
+}
+
+.list-group-item {
+    white-space: normal;
+    word-break: break-word;
+}
+
+#tabs1 {
+    overflow: visible;
+}
+
+.tab-content {
+    border-radius: 12px;
+    min-height: 420px;
+}
+
+#showWindow {
+    overflow-x: auto;
+}
+
+.btn,
+button,
+#delete,
+#add,
+#remove,
+#forget,
+#General {
+    max-width: 100%;
+    white-space: normal;
+}
+
+.card,
+.table,
+.modal-content {
+    box-shadow: var(--ui-shadow);
+}
+
+@media (max-width: 1200px) {
+    .app-layout {
+        grid-template-columns: minmax(200px, 240px) minmax(0, 1fr);
+    }
+
+    .weather {
+        min-width: 220px;
+    }
+}
+
+@media (max-width: 992px) {
+    #screen {
+        padding: 8px;
+    }
+
+    .app-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .list-group {
+        position: static;
+        max-height: none;
+    }
+
+    .wrapper,
+    .weather {
+        width: 100%;
+        max-width: none;
+    }
+
+    #title {
+        justify-content: flex-start;
+        text-align: left;
+    }
+}
+
+@media (max-width: 768px) {
+    .page-header {
+        gap: 8px;
+    }
+
+    .wrapper {
+        padding: 6px;
+    }
+
+    #time {
+        font-size: 2.4rem;
+    }
+
+    .day__wrapper {
+        font-size: 0.76rem;
+        flex-wrap: wrap;
+        gap: 4px;
+    }
+
+    #title {
+        font-size: 1.7rem;
+        line-height: 1.2;
+    }
+
+    #logout {
+        margin-top: 4px;
+    }
+
+    .panel-body {
+        padding: 10px;
+    }
+
+    .ui-page-subtitle {
+        text-align: left;
+        margin: 4px 0 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .weather,
+    .wrapper {
+        display: none;
+    }
+
+    #screen {
+        padding: 4px;
+    }
+
+    #title {
+        font-size: 1.45rem;
+        gap: 6px;
+    }
+
+    #foot {
+        display: none;
+    }
+}
+
+@media (min-width: 1500px) {
+    #screen {
+        max-width: 1720px;
+    }
+
+    .panel-body > .row {
+        grid-template-columns: minmax(250px, 320px) minmax(0, 1fr);
+        gap: 18px;
+    }
+}

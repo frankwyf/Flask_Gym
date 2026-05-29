@@ -97,3 +97,95 @@ video{
 #vinpage{
     width: 400px;
 }
+
+/* Responsive grid and media sizing */
+.card-group {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 14px;
+    align-items: stretch;
+    width: 100%;
+    padding: 0 8px;
+}
+
+#post,
+#post1,
+#coach,
+#coach1 {
+    width: 100%;
+    margin: 0;
+    border-radius: 14px;
+    display: flex;
+    flex-direction: column;
+}
+
+.card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.card-img-top,
+#coursecover,
+#coursecoverinpage {
+    width: 100%;
+    height: clamp(180px, 28vw, 300px);
+    object-fit: cover;
+}
+
+video,
+#vinpage {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    max-height: 280px;
+}
+
+.img-fluid.my-5 {
+    height: 44px;
+    width: 44px;
+}
+
+.center-block {
+    margin: 14px auto 0;
+    text-align: center;
+}
+
+#back {
+    margin: 16px auto;
+    display: inline-block;
+}
+
+#delete,
+button,
+.btn {
+    min-height: 38px;
+    white-space: normal;
+}
+
+@media (max-width: 992px) {
+    .card-group {
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    }
+
+    .card-text {
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 640px) {
+    .card-group {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        padding: 0 4px;
+    }
+
+    #newpost {
+        width: 100%;
+        margin: 0;
+    }
+
+    .text-muted {
+        font-size: 14px;
+    }
+}

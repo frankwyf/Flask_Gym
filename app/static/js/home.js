@@ -14,10 +14,13 @@ $(function () {
 })
 
 //weather window app
+var viewportWidth = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+var widgetWidth = Math.min(400, Math.max(220, viewportWidth - 36));
+
 WIDGET = {
     "CONFIG": {
         "layout": "1",
-        "width": "400",
+        "width": String(widgetWidth),
         "height": "115",
         "background": "1",
         "dataColor": "FFFFFF",
