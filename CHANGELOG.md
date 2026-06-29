@@ -28,6 +28,7 @@ All notable changes to this project are documented in this file.
 - Added TLS compose deployment profile and Nginx HTTPS reverse-proxy configuration template.
 - Added `/sloz` endpoint for token-guarded JSON SLO status snapshots.
 - Added Prometheus alert-rule template and monitoring operations guide.
+- Release pipeline now emits a generated summary note artifact with deployment and verification references.
 
 ### Changed
 

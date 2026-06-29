@@ -75,6 +75,33 @@ jobs:
             --exclude=Loggings \
             --exclude=tests/.pytest_flask_gym.db
 
+      - name: Generate release summary note
+        shell: bash
+        run: |
+          RELEASE_TAG="${{ steps.resolve_tag.outputs.release_tag }}"
+          cat > "dist/flask-gym-${RELEASE_TAG}-release-notes.md" << 'EOF'
+          ## Flask Gym Release Assets
+
+          This release includes:
+
+          - Source bundles (`.zip`, `.tar.gz`)
+          - SHA256 checksum manifest (`.sha256`)
+          - Cosign keyless signatures (`.sig`, `.pem`)
+
+          Operational templates included in repository:
+
+          - `docker-compose.prod.yml`
+          - `docker-compose.prod.tls.yml`
+          - `deploy/nginx/flask-gym.conf`
+          - `deploy/nginx/flask-gym.tls.conf`
+          - `deploy/monitoring/flask-gym-alert-rules.yml`
+
+          Verification guides:
+
+          - `docs/operations/verify-release-signature.md`
+          - `scripts/release/verify_release_signatures.sh`
+          EOF
+
       - name: Generate checksum manifest
         shell: bash
         run: |
@@ -127,3 +154,4 @@ jobs:
             dist/flask-gym-${{ steps.resolve_tag.outputs.release_tag }}.zip.pem
             dist/flask-gym-${{ steps.resolve_tag.outputs.release_tag }}.tar.gz.sig
             dist/flask-gym-${{ steps.resolve_tag.outputs.release_tag }}.tar.gz.pem
+            dist/flask-gym-${{ steps.resolve_tag.outputs.release_tag }}-release-notes.md
