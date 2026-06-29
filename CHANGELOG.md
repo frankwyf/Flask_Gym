@@ -30,6 +30,7 @@ All notable changes to this project are documented in this file.
 - Added Prometheus alert-rule template and monitoring operations guide.
 - Release pipeline now emits a generated summary note artifact with deployment and verification references.
 - Added Prometheus and Alertmanager example configs with monitoring compose overlay.
+- Improved monitoring guidance with alert-severity handling and runbook linkage recommendations.
 
 ### Changed
 

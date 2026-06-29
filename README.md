@@ -118,6 +118,7 @@ Open: `http://127.0.0.1:5000`
 - Prometheus alert rule template: [deploy/monitoring/flask-gym-alert-rules.yml](deploy/monitoring/flask-gym-alert-rules.yml)
 - Monitoring guide: [docs/operations/monitoring-prometheus.md](docs/operations/monitoring-prometheus.md)
 - Monitoring compose overlay: [docker-compose.monitoring.yml](docker-compose.monitoring.yml)
+- Alert response baseline: [docs/operations/rollback.md](docs/operations/rollback.md)
 
 ## Security Baseline
 

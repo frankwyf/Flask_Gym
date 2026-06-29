@@ -78,3 +78,5 @@ scrape_configs:
 - Keep alert thresholds aligned with your real SLOs.
 - Route critical alerts to on-call channels.
 - Correlate alerts with `/sloz` output for quick triage.
+- Link each alert to a runbook entry (for example `docs/operations/rollback.md`).
+- Treat `critical` alerts as paging events and `warning` as ticket/backlog events.

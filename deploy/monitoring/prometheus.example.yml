@@ -26,3 +26,7 @@ scrape_configs:
       - targets: ["nginx:80"]
     params:
       token: ["replace-with-metrics-token"]
+
+# Note:
+# For stricter environments, prefer scraping through an internal network path
+# where the token is injected by a trusted reverse proxy instead of query params.
