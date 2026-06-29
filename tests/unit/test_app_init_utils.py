@@ -5,6 +5,7 @@ from flask import Flask
 
 from app import make_dir
 from app import apply_runtime_hardening
+from config.settings import DEFAULT_SECRET_KEY
 
 
 def test_make_dir_creates_directory(tmp_path):
@@ -41,7 +42,7 @@ def test_apply_runtime_hardening_raises_when_strict_and_secret_is_default():
     sample_app.config["STRICT_CONFIG"] = True
     sample_app.config["TESTING"] = False
     sample_app.config["DEBUG"] = False
-    sample_app.config["SECRET_KEY"] = "dev-only-secret-change-in-production"
+    sample_app.config["SECRET_KEY"] = DEFAULT_SECRET_KEY
     sample_app.config["SESSION_COOKIE_SECURE"] = True
 
     with pytest.raises(RuntimeError):

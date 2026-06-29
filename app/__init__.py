@@ -7,6 +7,7 @@ from logging.handlers import RotatingFileHandler
 
 from app.errors.handlers import errors
 from config import Config
+from config.settings import DEFAULT_SECRET_KEY
 from flask import Flask, g, request
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
@@ -22,8 +23,6 @@ warnings.simplefilter("ignore")
 
 
 def apply_runtime_hardening(flask_app):
-    default_secret = "dev-only-secret-change-in-production"
-
     if flask_app.config.get("USE_PROXY_FIX"):
         flask_app.wsgi_app = ProxyFix(
             flask_app.wsgi_app,
@@ -34,7 +33,7 @@ def apply_runtime_hardening(flask_app):
         )
 
     if flask_app.config.get("STRICT_CONFIG") and not flask_app.config.get("TESTING"):
-        if flask_app.config.get("SECRET_KEY") == default_secret:
+        if flask_app.config.get("SECRET_KEY") == DEFAULT_SECRET_KEY:
             raise RuntimeError("STRICT_CONFIG is enabled but SECRET_KEY is not set securely.")
         if not flask_app.config.get("SESSION_COOKIE_SECURE") and not flask_app.config.get("DEBUG"):
             raise RuntimeError(

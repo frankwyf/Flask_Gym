@@ -5,6 +5,7 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 INSTANCE_DIR = BASE_DIR / "instance"
 INSTANCE_DIR.mkdir(exist_ok=True)
+DEFAULT_SECRET_KEY = "dev-only-secret-change-in-production"
 
 
 def _env_flag(name, default=False):
@@ -28,7 +29,7 @@ class Config:
     """Application configuration loaded from environment variables."""
 
     CSRF_ENABLED = True
-    SECRET_KEY = os.getenv("SECRET_KEY", "dev-only-secret-change-in-production")
+    SECRET_KEY = os.getenv("SECRET_KEY", DEFAULT_SECRET_KEY)
     DEBUG = _env_flag("DEBUG", False)
     TESTING = _env_flag("TESTING", False)
     STRICT_CONFIG = _env_flag("STRICT_CONFIG", False)
