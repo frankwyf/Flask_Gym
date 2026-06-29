@@ -5,6 +5,7 @@ from flask import Flask
 
 from app import make_dir
 from app import apply_runtime_hardening
+from app import _metric_name
 from config.settings import DEFAULT_SECRET_KEY
 
 
@@ -60,3 +61,14 @@ def test_apply_runtime_hardening_raises_when_strict_cookie_is_insecure():
 
     with pytest.raises(RuntimeError):
         apply_runtime_hardening(sample_app)
+
+
+def test_metric_name_normalizes_namespace():
+    from app import app
+
+    previous_namespace = app.config.get("METRICS_NAMESPACE")
+    app.config["METRICS_NAMESPACE"] = "Flask-Gym Prod"
+    try:
+        assert _metric_name("requests_total") == "Flask_Gym_Prod_requests_total"
+    finally:
+        app.config["METRICS_NAMESPACE"] = previous_namespace

@@ -97,11 +97,27 @@ Open: `http://127.0.0.1:5000`
 
 - `GET /healthz`: liveness endpoint for container/platform probes.
 - `GET /readyz`: readiness endpoint with database connectivity check.
+- `GET /metrics`: Prometheus-style runtime metrics endpoint (optional token guard).
 - `X-Request-ID` response header is attached to each request.
 - Security response headers are included by default:
 	- `X-Content-Type-Options: nosniff`
 	- `X-Frame-Options: SAMEORIGIN`
 	- `Referrer-Policy: strict-origin-when-cross-origin`
+	- `Content-Security-Policy` (configurable)
+	- `Permissions-Policy` (configurable)
+
+### Observability Notes
+
+- Structured request logs are enabled by default (`ENABLE_STRUCTURED_LOGGING=true`).
+- Unhandled request exceptions are sampled into error logs via `ERROR_LOG_SAMPLE_RATE`.
+- Metrics endpoint can be protected using `METRICS_TOKEN` through `X-Metrics-Token` header or `?token=` query.
+- Metrics naming prefix is configurable using `METRICS_NAMESPACE`.
+
+## Security Baseline
+
+- CI enforces source security scan (`bandit`) and dependency vulnerability scan (`pip-audit`).
+- Runtime security headers are configurable with `ENABLE_SECURITY_HEADERS`, `SECURITY_HEADER_CSP`, and `PERMISSIONS_POLICY`.
+- Optional HTTPS strict transport policy via `ENABLE_HSTS` and related `HSTS_*` settings.
 
 ## UI/UX Upgrade Highlights
 
@@ -156,6 +172,13 @@ Production runtime knobs:
 - `USE_PROXY_FIX`: when true, enables `ProxyFix` middleware for reverse-proxy deployments.
 - `PROXY_FIX_X_FOR`, `PROXY_FIX_X_PROTO`, `PROXY_FIX_X_HOST`, `PROXY_FIX_X_PORT`: trusted proxy hop counts.
 - `MAX_CONTENT_LENGTH_MB`: upload/body size cap in MB (default `32`).
+- `ENABLE_SECURITY_HEADERS`: toggles security header middleware.
+- `SECURITY_HEADER_CSP`: Content Security Policy value.
+- `PERMISSIONS_POLICY`: browser permissions policy header value.
+- `ENABLE_HSTS`, `HSTS_MAX_AGE`, `HSTS_INCLUDE_SUBDOMAINS`, `HSTS_PRELOAD`: HSTS controls for HTTPS deployments.
+- `ENABLE_STRUCTURED_LOGGING`: emit structured JSON request logs.
+- `ERROR_LOG_SAMPLE_RATE`: sampled exception logging ratio (`0.0`-`1.0`).
+- `METRICS_ENABLED`, `METRICS_NAMESPACE`, `METRICS_TOKEN`: metrics endpoint controls.
 
 See [configs/env.example](configs/env.example) for a full list.
 
@@ -206,9 +229,16 @@ GitHub Actions now runs a full CI/CD pipeline on pushes and pull requests to `ma
 
 Pipeline stages:
 
-- `quality`: critical lint rules + Bandit security scan report artifact.
+- `quality`: critical lint rules + Bandit scan + pip-audit dependency vulnerability scan (security artifacts uploaded).
 - `test`: Python version matrix (`3.10`, `3.11`, `3.12`, `3.13`) with junit + coverage artifacts.
 - `build-package` (main branch): Docker image build validation + deployment bundle artifact upload.
+
+## Release and Rollback
+
+- Release workflow: [.github/workflows/release.yml](.github/workflows/release.yml)
+	- Trigger on SemVer tags (`v*`) or manually via `workflow_dispatch`.
+	- Produces release bundles (`zip`, `tar.gz`) and publishes GitHub Release with auto-generated notes.
+- Rollback playbook: [docs/operations/rollback.md](docs/operations/rollback.md)
 
 ## License
 

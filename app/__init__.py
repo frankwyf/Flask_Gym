@@ -1,5 +1,9 @@
 import logging
 import os
+import hmac
+import json
+import random
+import threading
 import time
 import uuid
 import warnings
@@ -8,7 +12,7 @@ from logging.handlers import RotatingFileHandler
 from app.errors.handlers import errors
 from config import Config
 from config.settings import DEFAULT_SECRET_KEY
-from flask import Flask, g, request
+from flask import Flask, Response, g, request
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
 from flask_mail import Mail
@@ -20,6 +24,125 @@ app = Flask(__name__)
 app.config.from_object(Config)
 
 warnings.simplefilter("ignore")
+
+_PROCESS_STARTED_AT = time.time()
+_METRICS_LOCK = threading.Lock()
+_REQUEST_COUNT_METRICS = {}
+_REQUEST_LATENCY_METRICS = {}
+_EXCEPTIONS_TOTAL = 0
+
+
+def _normalize_metric_path_label():
+    if request.url_rule and request.url_rule.rule:
+        return request.url_rule.rule
+    return request.path or "unknown"
+
+
+def _prometheus_escape(value):
+    return value.replace("\\", "\\\\").replace('"', '\\"')
+
+
+def _metric_name(suffix):
+    namespace = app.config.get("METRICS_NAMESPACE", "flask_gym")
+    normalized = "".join(ch if (ch.isalnum() or ch == "_") else "_" for ch in namespace)
+    normalized = normalized.strip("_") or "flask_gym"
+    return f"{normalized}_{suffix}"
+
+
+def _record_request_metrics(method, path_label, status_code, latency_seconds):
+    with _METRICS_LOCK:
+        key = (method, path_label, str(status_code))
+        _REQUEST_COUNT_METRICS[key] = _REQUEST_COUNT_METRICS.get(key, 0) + 1
+
+        latency_key = (method, path_label)
+        metrics = _REQUEST_LATENCY_METRICS.setdefault(latency_key, {"sum": 0.0, "count": 0})
+        metrics["sum"] += latency_seconds
+        metrics["count"] += 1
+
+
+def _record_exception_metric():
+    global _EXCEPTIONS_TOTAL
+    with _METRICS_LOCK:
+        _EXCEPTIONS_TOTAL += 1
+
+
+def render_metrics_payload():
+    with _METRICS_LOCK:
+        request_counts = dict(_REQUEST_COUNT_METRICS)
+        request_latencies = {k: dict(v) for k, v in _REQUEST_LATENCY_METRICS.items()}
+        exceptions_total = _EXCEPTIONS_TOTAL
+
+    requests_total_metric = _metric_name("requests_total")
+    latency_sum_metric = _metric_name("request_latency_seconds_sum")
+    latency_count_metric = _metric_name("request_latency_seconds_count")
+    exceptions_total_metric = _metric_name("exceptions_total")
+    uptime_seconds_metric = _metric_name("uptime_seconds")
+
+    lines = [
+        f"# HELP {requests_total_metric} Total HTTP requests handled by Flask Gym.",
+        f"# TYPE {requests_total_metric} counter",
+    ]
+    for (method, path_label, status), value in sorted(request_counts.items()):
+        lines.append(
+            "%s{method=\"%s\",path=\"%s\",status=\"%s\"} %s"
+            % (
+                requests_total_metric,
+                _prometheus_escape(method),
+                _prometheus_escape(path_label),
+                _prometheus_escape(status),
+                value,
+            )
+        )
+
+    lines.extend(
+        [
+            f"# HELP {latency_sum_metric} Accumulated HTTP latency in seconds.",
+            f"# TYPE {latency_sum_metric} counter",
+        ]
+    )
+    for (method, path_label), values in sorted(request_latencies.items()):
+        lines.append(
+            "%s{method=\"%s\",path=\"%s\"} %.6f"
+            % (latency_sum_metric, _prometheus_escape(method), _prometheus_escape(path_label), values["sum"])
+        )
+
+    lines.extend(
+        [
+            f"# HELP {latency_count_metric} Number of latency samples collected.",
+            f"# TYPE {latency_count_metric} counter",
+        ]
+    )
+    for (method, path_label), values in sorted(request_latencies.items()):
+        lines.append(
+            "%s{method=\"%s\",path=\"%s\"} %s"
+            % (latency_count_metric, _prometheus_escape(method), _prometheus_escape(path_label), values["count"])
+        )
+
+    lines.extend(
+        [
+            f"# HELP {exceptions_total_metric} Total unhandled request exceptions.",
+            f"# TYPE {exceptions_total_metric} counter",
+            f"{exceptions_total_metric} {exceptions_total}",
+            f"# HELP {uptime_seconds_metric} Process uptime in seconds.",
+            f"# TYPE {uptime_seconds_metric} gauge",
+            f"{uptime_seconds_metric} {max(time.time() - _PROCESS_STARTED_AT, 0):.2f}",
+        ]
+    )
+
+    return "\n".join(lines) + "\n"
+
+
+def build_metrics_response():
+    return Response(render_metrics_payload(), mimetype="text/plain; version=0.0.4")
+
+
+def metrics_token_is_valid(provided_token):
+    expected_token = app.config.get("METRICS_TOKEN", "") or ""
+    if not expected_token:
+        return True
+    if not provided_token:
+        return False
+    return hmac.compare_digest(expected_token, provided_token)
 
 
 def apply_runtime_hardening(flask_app):
@@ -69,22 +192,96 @@ def attach_request_observability_context():
 def add_operability_headers(response):
     request_id = getattr(g, "request_id", "unknown")
     response.headers["X-Request-ID"] = request_id
-    response.headers.setdefault("X-Content-Type-Options", "nosniff")
-    response.headers.setdefault("X-Frame-Options", "SAMEORIGIN")
-    response.headers.setdefault("Referrer-Policy", "strict-origin-when-cross-origin")
+    if app.config.get("ENABLE_SECURITY_HEADERS", True):
+        response.headers.setdefault("X-Content-Type-Options", "nosniff")
+        response.headers.setdefault("X-Frame-Options", "SAMEORIGIN")
+        response.headers.setdefault("Referrer-Policy", "strict-origin-when-cross-origin")
+        response.headers.setdefault("X-Permitted-Cross-Domain-Policies", "none")
+
+        csp_value = app.config.get("SECURITY_HEADER_CSP", "")
+        if csp_value:
+            response.headers.setdefault("Content-Security-Policy", csp_value)
+
+        permissions_policy = app.config.get("PERMISSIONS_POLICY", "")
+        if permissions_policy:
+            response.headers.setdefault("Permissions-Policy", permissions_policy)
+
+        if app.config.get("ENABLE_HSTS") and request.is_secure:
+            hsts_parts = [f"max-age={max(app.config.get('HSTS_MAX_AGE', 31536000), 0)}"]
+            if app.config.get("HSTS_INCLUDE_SUBDOMAINS", True):
+                hsts_parts.append("includeSubDomains")
+            if app.config.get("HSTS_PRELOAD", False):
+                hsts_parts.append("preload")
+            response.headers["Strict-Transport-Security"] = "; ".join(hsts_parts)
 
     started_at = getattr(g, "request_started_at", None)
     if started_at is not None:
-        elapsed_ms = (time.perf_counter() - started_at) * 1000
-        app.logger.info(
-            "request_id=%s method=%s path=%s status=%s latency_ms=%.2f",
-            request_id,
-            request.method,
-            request.path,
-            response.status_code,
-            elapsed_ms,
-        )
+        elapsed_seconds = max(time.perf_counter() - started_at, 0)
+        elapsed_ms = elapsed_seconds * 1000
+        path_label = _normalize_metric_path_label()
+        _record_request_metrics(request.method, path_label, response.status_code, elapsed_seconds)
+
+        if app.config.get("ENABLE_STRUCTURED_LOGGING", True):
+            event = {
+                "event": "request_complete",
+                "request_id": request_id,
+                "method": request.method,
+                "path": path_label,
+                "status_code": response.status_code,
+                "latency_ms": round(elapsed_ms, 2),
+                "remote_addr": request.headers.get("X-Forwarded-For", request.remote_addr),
+                "user_agent": request.user_agent.string,
+            }
+            app.logger.info(json.dumps(event, ensure_ascii=True, sort_keys=True))
+        else:
+            app.logger.info(
+                "request_id=%s method=%s path=%s status=%s latency_ms=%.2f",
+                request_id,
+                request.method,
+                request.path,
+                response.status_code,
+                elapsed_ms,
+            )
     return response
+
+
+@app.teardown_request
+def capture_sampled_request_exceptions(exc):
+    if exc is None:
+        return None
+
+    _record_exception_metric()
+
+    sample_rate = app.config.get("ERROR_LOG_SAMPLE_RATE", 0.2)
+    try:
+        sample_rate = float(sample_rate)
+    except (TypeError, ValueError):
+        sample_rate = 0.0
+    sample_rate = min(max(sample_rate, 0.0), 1.0)
+
+    if random.random() <= sample_rate:
+        request_id = getattr(g, "request_id", "unknown")
+        path_label = _normalize_metric_path_label()
+        if app.config.get("ENABLE_STRUCTURED_LOGGING", True):
+            event = {
+                "event": "request_exception",
+                "request_id": request_id,
+                "method": request.method,
+                "path": path_label,
+                "exception_type": type(exc).__name__,
+                "message": str(exc),
+            }
+            app.logger.error(json.dumps(event, ensure_ascii=True, sort_keys=True), exc_info=True)
+        else:
+            app.logger.error(
+                "request_id=%s method=%s path=%s exception=%s",
+                request_id,
+                request.method,
+                request.path,
+                type(exc).__name__,
+                exc_info=True,
+            )
+    return None
 
 
 # create the log file automatically

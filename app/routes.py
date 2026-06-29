@@ -2,7 +2,7 @@ import datetime
 import json
 import os
 import time
-from app import app, db, bcrypt, mail
+from app import app, build_metrics_response, db, bcrypt, mail, metrics_token_is_valid
 from app.forms import ManagerLogin, ForgetPassword, UpdateAccountFrom, ResetPassword, \
     ManagerAccountFrom, Membership, UpdateCoachFrom, PostFrom, NewCourse
 from app.model import Coach, Customer, Course, Health, Manager, Post, Connect
@@ -42,6 +42,19 @@ def readyz():
     except Exception as exc:
         app.logger.error("Readiness check failed: %s", exc)
         return jsonify({"status": "degraded", "database": "down"}), 503
+
+
+@app.route('/metrics', methods=['GET'])
+def metrics():
+    if not app.config.get("METRICS_ENABLED", True):
+        return jsonify({"status": "disabled"}), 404
+
+    provided_token = request.headers.get("X-Metrics-Token") or request.args.get("token") or ""
+    if not metrics_token_is_valid(provided_token):
+        app.logger.warning("Metrics endpoint token validation failed.")
+        return jsonify({"status": "forbidden"}), 403
+
+    return build_metrics_response()
 
 @app.route('/register')
 def register():

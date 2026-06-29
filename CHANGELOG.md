@@ -17,6 +17,9 @@ All notable changes to this project are documented in this file.
 - Template engineering assets: `.editorconfig`, `pyproject.toml`, and `.pre-commit-config.yaml`.
 - Open source collaboration templates: PR template, issue forms, and Dependabot config.
 - Runtime hardening tests for strict config and reverse-proxy middleware behavior.
+- Prometheus-style metrics endpoint (`/metrics`) with optional token guard.
+- Release automation workflow for SemVer tags and manual release dispatch.
+- Rollback operations playbook for production incidents.
 
 ### Changed
 
@@ -31,3 +34,6 @@ All notable changes to this project are documented in this file.
 - Added optional reverse-proxy middleware configuration (`USE_PROXY_FIX` + trusted hop settings).
 - Docker image now includes container healthcheck against `/healthz`.
 - Docker runtime base image upgraded to `python:3.13-slim` for fresher security baseline.
+- Response header baseline now includes configurable CSP and Permissions-Policy.
+- Runtime supports sampled exception logging and structured request logs by default.
+- CI quality gate now enforces dependency vulnerability scanning with `pip-audit`.
