@@ -90,3 +90,15 @@ scrape_configs:
 - Correlate alerts with `/sloz` output for quick triage.
 - Link each alert to a runbook entry (for example `docs/operations/rollback.md`).
 - Treat `critical` alerts as paging events and `warning` as ticket/backlog events.
+
+## 8. Grafana dashboard template
+
+An import-ready dashboard template is provided:
+
+- `deploy/monitoring/grafana/flask-gym-overview.dashboard.json`
+
+Suggested import flow:
+
+1. Add Prometheus as a Grafana datasource.
+2. Import the dashboard JSON file.
+3. Validate panels for SLO error rate, latency compliance, and request traffic.

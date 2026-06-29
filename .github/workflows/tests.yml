@@ -151,3 +151,4 @@ jobs:
             deploy/monitoring/prometheus.example.yml
             deploy/monitoring/prometheus.tls.example.yml
             deploy/monitoring/alertmanager.example.yml
+            deploy/monitoring/grafana/flask-gym-overview.dashboard.json

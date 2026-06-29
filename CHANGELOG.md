@@ -32,6 +32,7 @@ All notable changes to this project are documented in this file.
 - Added Prometheus and Alertmanager example configs with monitoring compose overlay.
 - Improved monitoring guidance with alert-severity handling and runbook linkage recommendations.
 - Added TLS monitoring overlay and HTTPS Prometheus scrape configuration template.
+- Added Grafana overview dashboard template for SLO and traffic visualization.
 
 ### Changed
 

@@ -119,6 +119,7 @@ Open: `http://127.0.0.1:5000`
 - Monitoring guide: [docs/operations/monitoring-prometheus.md](docs/operations/monitoring-prometheus.md)
 - Monitoring compose overlay: [docker-compose.monitoring.yml](docker-compose.monitoring.yml)
 - TLS monitoring overlay: [docker-compose.monitoring.tls.yml](docker-compose.monitoring.tls.yml)
+- Grafana dashboard template: [deploy/monitoring/grafana/flask-gym-overview.dashboard.json](deploy/monitoring/grafana/flask-gym-overview.dashboard.json)
 - Alert response baseline: [docs/operations/rollback.md](docs/operations/rollback.md)
 
 ## Security Baseline
