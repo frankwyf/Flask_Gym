@@ -1,8 +1,22 @@
 # Flask Gym Platform
 
+[![CI](https://github.com/frankwyf/Flask_Gym/actions/workflows/tests.yml/badge.svg)](https://github.com/frankwyf/Flask_Gym/actions/workflows/tests.yml)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)](requirements.txt)
+
 Portfolio-ready open-source refactor of a legacy monolithic demo project.
 
 This application is a role-based gym management platform built with Flask. It includes customer, coach, and manager workflows for account management, course publishing, and booking.
+
+## Template Baseline
+
+This repository can be used as a production-oriented Flask starter template.
+
+- Ready-to-run CI/CD with quality, test matrix, and container build stages.
+- Runtime health/readiness probes with request trace headers.
+- Container-first deployment path with Gunicorn and Docker.
+- Open-source community defaults (contributing guide, issue forms, PR template).
+- Dependency update automation via Dependabot.
 
 ## Documentation
 

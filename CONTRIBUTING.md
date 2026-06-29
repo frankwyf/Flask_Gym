@@ -24,10 +24,25 @@ Copy-Item configs/env.example .env
 python scripts/db_create.py
 ```
 
+5. Optional (recommended): install commit hooks:
+
+```powershell
+python -m pip install pre-commit
+pre-commit install
+```
+
 ## Run Tests
 
 ```powershell
 python -m pytest -q
+```
+
+## Run Local Quality Gate
+
+```powershell
+python -m pip install ruff bandit
+ruff check app tests --select=E9,F63,F7,F82
+bandit -q -r app -x app/static
 ```
 
 ## Pull Request Checklist
@@ -36,6 +51,8 @@ python -m pytest -q
 - Add or update tests for behavior changes.
 - Update docs when commands, config, or structure changes.
 - Ensure all tests pass locally.
+- Ensure quality checks pass locally (ruff + bandit).
+- Include a clear summary and validation notes in PR template.
 
 ## Commit Style
 
