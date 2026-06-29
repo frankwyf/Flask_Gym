@@ -1,5 +1,6 @@
 import datetime
 import os
+import secrets
 import shutil
 
 from sqlalchemy import inspect
@@ -141,7 +142,9 @@ def _upsert_public_coaches(db, bcrypt):
         if coach is None:
             coach = Coach()
             coach.username = item["username"]
-            coach.password = bcrypt.generate_password_hash("public123").decode("utf-8")
+            # Seed accounts are demo-only identities and should not share a known password.
+            random_password = secrets.token_urlsafe(24)
+            coach.password = bcrypt.generate_password_hash(random_password).decode("utf-8")
             db.session.add(coach)
             changed = True
 

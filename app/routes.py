@@ -549,7 +549,6 @@ def newAccount():  # sign up route for customers
         # validate user's message
         newname = request.form.get("name")
         mail = request.form.get("mailenter")
-        psw = request.form.get('psw')
         # Radio input is a single value; coerce safely to int for DB storage.
         gender_raw = request.form.get('gender', '0')
         try:
@@ -612,7 +611,7 @@ def newAccount():  # sign up route for customers
             app.logger.error('%s', e)
             raise e
         form = ForgetPassword()
-        return render_template("login.html", username=newname, password=psw, form=form)
+        return render_template("login.html", username=newname, form=form)
     if request.method == 'GET':
         if current_user.is_authenticated:  # a logged-in in user should stay in the system
             flash("DO NOT use url to access! Choose from menu panel instead.", 'info')

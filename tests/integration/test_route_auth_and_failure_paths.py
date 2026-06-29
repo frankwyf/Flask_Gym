@@ -59,17 +59,21 @@ def test_logout_for_manager_role(client, seeded_users):
 
 
 def test_new_account_registration_accepts_gender_scalar(client):
+    submitted_password = "CustomerPass66"
     response = client.post(
         "/newAccount",
         data={
             "name": "new_customer_scalar_gender",
             "mailenter": "new_customer_scalar_gender@example.com",
-            "psw": "CustomerPass66",
+            "psw": submitted_password,
             "gender": "1",
         },
         follow_redirects=True,
     )
     assert response.status_code == 200
+
+    response_body = response.get_data(as_text=True)
+    assert submitted_password not in response_body
 
     created = Customer.query.filter_by(username="new_customer_scalar_gender").first()
     assert created is not None
