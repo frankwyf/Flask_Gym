@@ -253,6 +253,7 @@ Pipeline stages:
 	- Produces release bundles (`zip`, `tar.gz`) with checksum manifest and keyless Cosign signatures, then publishes GitHub Release with auto-generated notes.
 - Rollback playbook: [docs/operations/rollback.md](docs/operations/rollback.md)
 - Signature verification guide: [docs/operations/verify-release-signature.md](docs/operations/verify-release-signature.md)
+- Strict verifier script: [scripts/release/verify_release_signatures.sh](scripts/release/verify_release_signatures.sh)
 
 ## License
 

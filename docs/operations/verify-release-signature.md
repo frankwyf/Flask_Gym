@@ -57,3 +57,24 @@ For stricter policy, constrain identity to this repository/workflow when verifyi
 - Workflow: `.github/workflows/release.yml`
 
 Use exact identity constraints in environments that require provenance lock-down.
+
+## 6. Strict verification helper script
+
+This repository includes a strict verifier that enforces:
+
+- checksum manifest validation
+- OIDC issuer match
+- exact workflow identity on the release tag
+
+Run from the folder containing downloaded release assets:
+
+```bash
+bash scripts/release/verify_release_signatures.sh v1.2.3
+```
+
+The script expects files for the provided tag:
+
+- `flask-gym-v1.2.3.zip`
+- `flask-gym-v1.2.3.tar.gz`
+- `flask-gym-v1.2.3.sha256`
+- matching `.sig` and `.pem` files for both archives

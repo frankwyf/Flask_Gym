@@ -24,6 +24,7 @@ All notable changes to this project are documented in this file.
 - Production-like Docker Compose deployment template with Nginx reverse proxy.
 - Deployment operations guide for compose-based rollout and health validation.
 - Keyless Cosign signatures for release bundles with verification guide.
+- Added strict release-signature verification script with tag-bound workflow identity checks.
 
 ### Changed
 
