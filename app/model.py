@@ -6,6 +6,26 @@ from flask import session, request, redirect, url_for, flash
 from flask_login import UserMixin
 
 
+ANON_ALLOWED_EXACT_PATHS = {
+    "/",
+    "/healthz",
+    "/readyz",
+    "/newlogin",
+    "/Managerlogin",
+    "/Managers",
+    "/CustomerLogin",
+    "/manager",
+    "/register",
+    "/newAccount",
+    "/Request_password_reset",
+}
+
+ANON_ALLOWED_PREFIX_PATHS = (
+    "/static",
+    "/Reset_password",
+)
+
+
 def _jwt_signing_key():
     secret = app.config["SECRET_KEY"]
     if isinstance(secret, str):
@@ -26,33 +46,10 @@ def load_Users(user_id):
 # listening to url accessing for defending of illegal url visits
 @app.before_request
 def before_user():
-    # all sing up routes should be able to visit
-    if request.path == "/":
+    path = request.path
+    if path in ANON_ALLOWED_EXACT_PATHS:
         return None
-    if request.path == "/healthz":
-        return None
-    if request.path == "/readyz":
-        return None
-    if request.path == "/newlogin":
-        return None
-    if request.path == "/Managerlogin":
-        return None
-    if request.path == "/Managers":
-        return None
-    if request.path == "/CustomerLogin":
-        return None
-    if request.path.startswith("/static"):
-        return None
-    # some functions before sign in should be able to visit without authentication
-    if request.path == "/manager":
-        return None
-    if request.path == "/register":
-        return None
-    if request.path == "/newAccount":
-        return None
-    if request.path == "/Request_password_reset":
-        return None
-    if request.path.startswith("/Reset_password"):
+    if any(path.startswith(prefix) for prefix in ANON_ALLOWED_PREFIX_PATHS):
         return None
     if not session.get("role"):
         flash("Login to explore this app!", 'info')
