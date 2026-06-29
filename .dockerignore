@@ -1,0 +1,14 @@
+.git
+.github
+.venv
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+coverage.xml
+htmlcov/
+tests/.pytest_flask_gym.db
+instance/*.db
+Loggings/*.log

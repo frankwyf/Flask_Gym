@@ -9,7 +9,15 @@ All notable changes to this project are documented in this file.
 - Open-source governance docs: LICENSE, CONTRIBUTING, CODE_OF_CONDUCT,
   SECURITY, and CHANGELOG.
 - GitHub Actions workflow for automated test execution on push and pull request.
+- Runtime health endpoints: `/healthz` and `/readyz`.
+- Request-level observability headers and request tracing ID.
+- Dashboard visual stage module with animated metric cards.
+- Containerization assets: `Dockerfile` and `.dockerignore`.
+- Integration tests for operability/security headers and upgraded dashboard surface.
 
 ### Changed
 
 - Repository structure documentation updated to match current layout.
+- CI workflow upgraded to a multi-stage CI/CD pipeline with quality gate,
+  Python matrix testing, artifact publishing, and container build packaging.
+- Default security-oriented Flask session configuration hardening.

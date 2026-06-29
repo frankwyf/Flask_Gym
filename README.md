@@ -33,6 +33,7 @@ This repository is intended for portfolio and learning purposes:
 - Data: SQLite (default), MySQL compatible via `DATABASE_URL`
 - Auth/Security: Flask-Bcrypt, token-based password reset flow
 - Media: Pillow, MoviePy
+- Ops/Delivery: GitHub Actions CI/CD, Docker, Gunicorn
 
 ## Quick Start
 
@@ -77,6 +78,38 @@ python run.py
 ```
 
 Open: `http://127.0.0.1:5000`
+
+## Runtime Health and Observability
+
+- `GET /healthz`: liveness endpoint for container/platform probes.
+- `GET /readyz`: readiness endpoint with database connectivity check.
+- `X-Request-ID` response header is attached to each request.
+- Security response headers are included by default:
+	- `X-Content-Type-Options: nosniff`
+	- `X-Frame-Options: SAMEORIGIN`
+	- `Referrer-Policy: strict-origin-when-cross-origin`
+
+## UI/UX Upgrade Highlights
+
+- New dashboard stage section with live animated metric cards.
+- Bold visual direction with responsive gradients and stronger typographic hierarchy.
+- Enhanced small-screen adaptability for dashboard shell and content panels.
+
+## Docker Deployment
+
+Build image:
+
+```powershell
+docker build -t flask-gym:local .
+```
+
+Run container:
+
+```powershell
+docker run --rm -p 8000:8000 --env SECRET_KEY=change-me flask-gym:local
+```
+
+Open: `http://127.0.0.1:8000`
 
 ## Default Public Catalog
 
@@ -146,9 +179,15 @@ Note: Some legacy tests may rely on specific seeded records. See language docs f
 
 ## CI
 
-GitHub Actions runs tests automatically on pushes and pull requests to `main`.
+GitHub Actions now runs a full CI/CD pipeline on pushes and pull requests to `main`.
 
 - Workflow file: [.github/workflows/tests.yml](.github/workflows/tests.yml)
+
+Pipeline stages:
+
+- `quality`: critical lint rules + Bandit security scan report artifact.
+- `test`: Python version matrix (`3.10`, `3.11`, `3.12`, `3.13`) with junit + coverage artifacts.
+- `build-package` (main branch): Docker image build validation + deployment bundle artifact upload.
 
 ## License
 
