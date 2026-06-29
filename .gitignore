@@ -30,3 +30,6 @@ Thumbs.db
 
 # Local uploads/temp artifacts
 temp_video/
+
+# Local legacy docs snapshots
+GYM*/

@@ -159,7 +159,7 @@ python -m pytest tests/click -q
 Test layout:
 
 - `tests/click`: click-flow integration tests (new)
-- `tests/legacy`: original coursework tests
+- `tests/legacy`: original baseline compatibility tests
 - `tests/unit`: model/forms/error-handler unit tests
 - `tests/integration`: auth and route failure-path integration tests
 
