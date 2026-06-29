@@ -74,6 +74,13 @@ jobs:
             --exclude=Loggings \
             --exclude=tests/.pytest_flask_gym.db
 
+      - name: Generate checksum manifest
+        shell: bash
+        run: |
+          RELEASE_TAG="${{ steps.resolve_tag.outputs.release_tag }}"
+          cd dist
+          sha256sum "flask-gym-${RELEASE_TAG}.zip" "flask-gym-${RELEASE_TAG}.tar.gz" > "flask-gym-${RELEASE_TAG}.sha256"
+
       - name: Upload release bundle artifact
         uses: actions/upload-artifact@v5
         with:
@@ -89,3 +96,4 @@ jobs:
           files: |
             dist/flask-gym-${{ steps.resolve_tag.outputs.release_tag }}.zip
             dist/flask-gym-${{ steps.resolve_tag.outputs.release_tag }}.tar.gz
+            dist/flask-gym-${{ steps.resolve_tag.outputs.release_tag }}.sha256
