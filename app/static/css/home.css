@@ -262,3 +262,161 @@ body {
         display: none;
     }
 }
+
+/* 2026 visual upgrade layer */
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&family=Space+Grotesk:wght@400;500;700&display=swap');
+
+:root {
+    --neo-bg-1: #04141c;
+    --neo-bg-2: #0b2f41;
+    --neo-accent-hot: #ff6a00;
+    --neo-accent-cool: #15b7b9;
+    --neo-card: rgba(6, 29, 41, 0.64);
+    --neo-border: rgba(112, 201, 205, 0.34);
+    --neo-text: #eaf5fb;
+}
+
+body {
+    font-family: 'Space Grotesk', 'Segoe UI', Tahoma, sans-serif;
+    background-image:
+        radial-gradient(circle at 12% 14%, rgba(255, 106, 0, 0.28), transparent 34%),
+        radial-gradient(circle at 86% 12%, rgba(21, 183, 185, 0.24), transparent 38%),
+        linear-gradient(138deg, var(--neo-bg-1), var(--neo-bg-2));
+    color: var(--neo-text);
+}
+
+.panel-body {
+    border: 1px solid var(--neo-border);
+    backdrop-filter: blur(6px);
+}
+
+.dashboard-stage {
+    display: grid;
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+    gap: 18px;
+    margin: 8px 0 14px;
+    padding: 14px;
+    border-radius: 18px;
+    background: linear-gradient(145deg, rgba(5, 25, 36, 0.82), rgba(7, 46, 62, 0.72));
+    border: 1px solid rgba(160, 232, 235, 0.3);
+    box-shadow: 0 20px 44px rgba(0, 0, 0, 0.3);
+}
+
+.stage-kicker {
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    font-size: 11px;
+    color: #9adbe2;
+}
+
+.stage-title {
+    margin: 4px 0 8px;
+    font-family: 'Rajdhani', 'Trebuchet MS', sans-serif;
+    font-weight: 700;
+    font-size: clamp(24px, 3vw, 38px);
+    line-height: 1.08;
+    color: #f7fcff;
+}
+
+.stage-desc {
+    margin: 0;
+    max-width: 56ch;
+    color: #c4e5ef;
+    font-size: 14px;
+}
+
+.stage-metrics {
+    display: grid;
+    gap: 10px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.stage-card {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding: 12px;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    background: var(--neo-card);
+    transform: translateY(0);
+    transition: transform 220ms ease, box-shadow 220ms ease;
+}
+
+.stage-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 26px rgba(0, 0, 0, 0.22);
+}
+
+.stage-label {
+    font-size: 11px;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: #b6d5dd;
+}
+
+.stage-value {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: clamp(28px, 2.5vw, 42px);
+    line-height: 1;
+    background: linear-gradient(90deg, var(--neo-accent-hot), #ffc760);
+    -webkit-text-fill-color: transparent;
+    -webkit-background-clip: text;
+}
+
+.stage-note {
+    font-size: 12px;
+    color: #89c7cc;
+}
+
+#title {
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+#name {
+    color: #ffe3ca;
+    font-family: 'Rajdhani', sans-serif;
+}
+
+.ui-chip {
+    background: linear-gradient(90deg, rgba(255, 106, 0, 0.26), rgba(21, 183, 185, 0.28));
+    border: 1px solid rgba(255, 255, 255, 0.24);
+}
+
+@media only screen and (max-width: 1100px) {
+    .dashboard-stage {
+        grid-template-columns: 1fr;
+    }
+
+    .stage-metrics {
+        grid-template-columns: repeat(3, minmax(110px, 1fr));
+    }
+}
+
+@media only screen and (max-width: 700px) {
+    .dashboard-stage {
+        padding: 12px;
+    }
+
+    .stage-title {
+        font-size: 24px;
+    }
+
+    .stage-metrics {
+        grid-template-columns: 1fr;
+    }
+
+    .stage-card {
+        padding: 10px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .stage-card,
+    .stage-card:hover {
+        transform: none;
+        transition: none;
+    }
+}
