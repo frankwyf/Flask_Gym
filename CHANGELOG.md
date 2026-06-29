@@ -20,6 +20,7 @@ All notable changes to this project are documented in this file.
 - Prometheus-style metrics endpoint (`/metrics`) with optional token guard.
 - Release automation workflow for SemVer tags and manual release dispatch.
 - Rollback operations playbook for production incidents.
+- Release workflow checksum manifest (`.sha256`) for release bundle integrity verification.
 
 ### Changed
 
@@ -37,3 +38,4 @@ All notable changes to this project are documented in this file.
 - Response header baseline now includes configurable CSP and Permissions-Policy.
 - Runtime supports sampled exception logging and structured request logs by default.
 - CI quality gate now enforces dependency vulnerability scanning with `pip-audit`.
+- CI quality gate now generates and uploads CycloneDX SBOM artifacts.

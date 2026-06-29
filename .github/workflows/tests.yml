@@ -35,7 +35,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           python -m pip install -r requirements.txt
-          python -m pip install ruff bandit pip-audit
+          python -m pip install ruff bandit pip-audit cyclonedx-bom
 
       - name: Lint critical Python issues
         run: |
@@ -48,6 +48,10 @@ jobs:
       - name: Dependency vulnerability scan (pip-audit)
         run: |
           pip-audit -r requirements.txt -f json -o pip-audit-report.json
+
+      - name: Generate SBOM (CycloneDX)
+        run: |
+          cyclonedx-py requirements requirements.txt --output-file sbom.cdx.json --output-format JSON
 
       - name: Upload security report
         uses: actions/upload-artifact@v5
@@ -63,6 +67,14 @@ jobs:
         with:
           name: pip-audit-report
           path: pip-audit-report.json
+          if-no-files-found: warn
+
+      - name: Upload SBOM artifact
+        uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: sbom-cyclonedx
+          path: sbom.cdx.json
           if-no-files-found: warn
 
   test:

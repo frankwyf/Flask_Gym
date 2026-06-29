@@ -229,7 +229,7 @@ GitHub Actions now runs a full CI/CD pipeline on pushes and pull requests to `ma
 
 Pipeline stages:
 
-- `quality`: critical lint rules + Bandit scan + pip-audit dependency vulnerability scan (security artifacts uploaded).
+- `quality`: critical lint rules + Bandit scan + pip-audit dependency vulnerability scan + CycloneDX SBOM artifact generation.
 - `test`: Python version matrix (`3.10`, `3.11`, `3.12`, `3.13`) with junit + coverage artifacts.
 - `build-package` (main branch): Docker image build validation + deployment bundle artifact upload.
 
