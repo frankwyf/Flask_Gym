@@ -23,6 +23,7 @@ All notable changes to this project are documented in this file.
 - Release workflow checksum manifest (`.sha256`) for release bundle integrity verification.
 - Production-like Docker Compose deployment template with Nginx reverse proxy.
 - Deployment operations guide for compose-based rollout and health validation.
+- Keyless Cosign signatures for release bundles with verification guide.
 
 ### Changed
 

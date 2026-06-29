@@ -13,6 +13,7 @@ on:
 
 permissions:
   contents: write
+  id-token: write
 
 concurrency:
   group: release-${{ github.ref_name || inputs.release_tag }}
@@ -88,6 +89,31 @@ jobs:
           path: dist/
           if-no-files-found: error
 
+      - name: Install cosign
+        uses: sigstore/cosign-installer@v3.7.0
+
+      - name: Sign release assets with cosign (keyless)
+        shell: bash
+        run: |
+          RELEASE_TAG="${{ steps.resolve_tag.outputs.release_tag }}"
+          cosign sign-blob --yes \
+            --output-certificate "dist/flask-gym-${RELEASE_TAG}.zip.pem" \
+            --output-signature "dist/flask-gym-${RELEASE_TAG}.zip.sig" \
+            "dist/flask-gym-${RELEASE_TAG}.zip"
+          cosign sign-blob --yes \
+            --output-certificate "dist/flask-gym-${RELEASE_TAG}.tar.gz.pem" \
+            --output-signature "dist/flask-gym-${RELEASE_TAG}.tar.gz.sig" \
+            "dist/flask-gym-${RELEASE_TAG}.tar.gz"
+
+      - name: Upload signature artifacts
+        uses: actions/upload-artifact@v5
+        with:
+          name: release-signatures-${{ steps.resolve_tag.outputs.release_tag }}
+          path: |
+            dist/*.sig
+            dist/*.pem
+          if-no-files-found: error
+
       - name: Publish GitHub release
         uses: softprops/action-gh-release@v2
         with:
@@ -97,3 +123,7 @@ jobs:
             dist/flask-gym-${{ steps.resolve_tag.outputs.release_tag }}.zip
             dist/flask-gym-${{ steps.resolve_tag.outputs.release_tag }}.tar.gz
             dist/flask-gym-${{ steps.resolve_tag.outputs.release_tag }}.sha256
+            dist/flask-gym-${{ steps.resolve_tag.outputs.release_tag }}.zip.sig
+            dist/flask-gym-${{ steps.resolve_tag.outputs.release_tag }}.zip.pem
+            dist/flask-gym-${{ steps.resolve_tag.outputs.release_tag }}.tar.gz.sig
+            dist/flask-gym-${{ steps.resolve_tag.outputs.release_tag }}.tar.gz.pem

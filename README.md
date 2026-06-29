@@ -247,8 +247,9 @@ Pipeline stages:
 
 - Release workflow: [.github/workflows/release.yml](.github/workflows/release.yml)
 	- Trigger on SemVer tags (`v*`) or manually via `workflow_dispatch`.
-	- Produces release bundles (`zip`, `tar.gz`) with checksum manifest and publishes GitHub Release with auto-generated notes.
+	- Produces release bundles (`zip`, `tar.gz`) with checksum manifest and keyless Cosign signatures, then publishes GitHub Release with auto-generated notes.
 - Rollback playbook: [docs/operations/rollback.md](docs/operations/rollback.md)
+- Signature verification guide: [docs/operations/verify-release-signature.md](docs/operations/verify-release-signature.md)
 
 ## License
 
