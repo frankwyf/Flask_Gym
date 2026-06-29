@@ -13,11 +13,36 @@ from flask_login import LoginManager
 from flask_mail import Mail
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 app = Flask(__name__)
 app.config.from_object(Config)
 
 warnings.simplefilter("ignore")
+
+
+def apply_runtime_hardening(flask_app):
+    default_secret = "dev-only-secret-change-in-production"
+
+    if flask_app.config.get("USE_PROXY_FIX"):
+        flask_app.wsgi_app = ProxyFix(
+            flask_app.wsgi_app,
+            x_for=flask_app.config.get("PROXY_FIX_X_FOR", 1),
+            x_proto=flask_app.config.get("PROXY_FIX_X_PROTO", 1),
+            x_host=flask_app.config.get("PROXY_FIX_X_HOST", 1),
+            x_port=flask_app.config.get("PROXY_FIX_X_PORT", 1),
+        )
+
+    if flask_app.config.get("STRICT_CONFIG") and not flask_app.config.get("TESTING"):
+        if flask_app.config.get("SECRET_KEY") == default_secret:
+            raise RuntimeError("STRICT_CONFIG is enabled but SECRET_KEY is not set securely.")
+        if not flask_app.config.get("SESSION_COOKIE_SECURE") and not flask_app.config.get("DEBUG"):
+            raise RuntimeError(
+                "STRICT_CONFIG is enabled but SESSION_COOKIE_SECURE is false outside debug mode."
+            )
+
+
+apply_runtime_hardening(app)
 
 mail = Mail(app)
 
