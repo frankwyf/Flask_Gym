@@ -2,7 +2,7 @@ import logging
 import os
 import hmac
 import json
-import random
+import secrets
 import threading
 import time
 import uuid
@@ -30,6 +30,7 @@ _METRICS_LOCK = threading.Lock()
 _REQUEST_COUNT_METRICS = {}
 _REQUEST_LATENCY_METRICS = {}
 _EXCEPTIONS_TOTAL = 0
+_SYSTEM_RANDOM = secrets.SystemRandom()
 
 
 def _normalize_metric_path_label():
@@ -259,7 +260,7 @@ def capture_sampled_request_exceptions(exc):
         sample_rate = 0.0
     sample_rate = min(max(sample_rate, 0.0), 1.0)
 
-    if random.random() <= sample_rate:
+    if _SYSTEM_RANDOM.random() <= sample_rate:
         request_id = getattr(g, "request_id", "unknown")
         path_label = _normalize_metric_path_label()
         if app.config.get("ENABLE_STRUCTURED_LOGGING", True):
