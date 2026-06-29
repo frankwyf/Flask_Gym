@@ -77,4 +77,7 @@ def test_customer_api_login_and_join_course_flow(client, seeded_users):
 	assert response.status_code == 200
 
 	response = client.get("/ShowMycourseInpage", follow_redirects=False)
+	assert response.status_code == 302
+
+	response = client.get("/ShowMycourseInpage", follow_redirects=True)
 	assert response.status_code == 200

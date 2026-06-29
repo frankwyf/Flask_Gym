@@ -1,12 +1,13 @@
 import logging
 import os
 import time
+import uuid
 import warnings
 from logging.handlers import RotatingFileHandler
 
 from app.errors.handlers import errors
 from config import Config
-from flask import Flask
+from flask import Flask, g, request
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
 from flask_mail import Mail
@@ -31,6 +32,35 @@ login_manager = LoginManager(app)  # the login manager that manager the log in s
 def create_app():
     # Keep compatibility for scripts that import an app factory.
     return app
+
+
+@app.before_request
+def attach_request_observability_context():
+    # Attach per-request diagnostics for tracing and latency measurement.
+    g.request_id = request.headers.get("X-Request-ID") or str(uuid.uuid4())
+    g.request_started_at = time.perf_counter()
+
+
+@app.after_request
+def add_operability_headers(response):
+    request_id = getattr(g, "request_id", "unknown")
+    response.headers["X-Request-ID"] = request_id
+    response.headers.setdefault("X-Content-Type-Options", "nosniff")
+    response.headers.setdefault("X-Frame-Options", "SAMEORIGIN")
+    response.headers.setdefault("Referrer-Policy", "strict-origin-when-cross-origin")
+
+    started_at = getattr(g, "request_started_at", None)
+    if started_at is not None:
+        elapsed_ms = (time.perf_counter() - started_at) * 1000
+        app.logger.info(
+            "request_id=%s method=%s path=%s status=%s latency_ms=%.2f",
+            request_id,
+            request.method,
+            request.path,
+            response.status_code,
+            elapsed_ms,
+        )
+    return response
 
 
 # create the log file automatically

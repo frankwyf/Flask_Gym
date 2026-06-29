@@ -6,9 +6,10 @@ from app import app, db, bcrypt, mail
 from app.forms import ManagerLogin, ForgetPassword, UpdateAccountFrom, ResetPassword, \
     ManagerAccountFrom, Membership, UpdateCoachFrom, PostFrom, NewCourse
 from app.model import Coach, Customer, Course, Health, Manager, Post, Connect
-from flask import render_template, flash, request, session, url_for, redirect
+from flask import render_template, flash, request, session, url_for, redirect, jsonify
 from flask_login import logout_user, login_user, current_user, login_required
 from flask_mail import Message
+from sqlalchemy import text
 
 try:
     from PIL import Image
@@ -26,6 +27,21 @@ def welcome():
     form = ForgetPassword()
     app.logger.info("Index page (App started successfully).")
     return render_template("login.html", form=form)
+
+
+@app.route('/healthz', methods=['GET'])
+def healthz():
+    return jsonify({"status": "ok", "service": "flask-gym"}), 200
+
+
+@app.route('/readyz', methods=['GET'])
+def readyz():
+    try:
+        db.session.execute(text("SELECT 1"))
+        return jsonify({"status": "ready", "database": "up"}), 200
+    except Exception as exc:
+        app.logger.error("Readiness check failed: %s", exc)
+        return jsonify({"status": "degraded", "database": "down"}), 503
 
 @app.route('/register')
 def register():

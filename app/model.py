@@ -29,6 +29,10 @@ def before_user():
     # all sing up routes should be able to visit
     if request.path == "/":
         return None
+    if request.path == "/healthz":
+        return None
+    if request.path == "/readyz":
+        return None
     if request.path == "/newlogin":
         return None
     if request.path == "/Managerlogin":

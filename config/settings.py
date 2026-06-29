@@ -12,6 +12,10 @@ class Config:
 
     CSRF_ENABLED = True
     SECRET_KEY = os.getenv("SECRET_KEY", "dev-only-secret-change-in-production")
+    TESTING = os.getenv("TESTING", "false").lower() in ("1", "true", "yes")
+    SESSION_COOKIE_HTTPONLY = True
+    SESSION_COOKIE_SAMESITE = os.getenv("SESSION_COOKIE_SAMESITE", "Lax")
+    SESSION_COOKIE_SECURE = os.getenv("SESSION_COOKIE_SECURE", "false").lower() in ("1", "true", "yes")
     SQLALCHEMY_DATABASE_URI = os.getenv(
         "DATABASE_URL",
         f"sqlite:///{(INSTANCE_DIR / 'flask_gym.db').as_posix()}",
