@@ -142,4 +142,6 @@ jobs:
             Dockerfile
             requirements.txt
             docker-compose.prod.yml
+            docker-compose.prod.tls.yml
             deploy/nginx/flask-gym.conf
+            deploy/nginx/flask-gym.tls.conf

@@ -151,6 +151,14 @@ docker compose -f docker-compose.prod.yml up -d
 
 Operational guide: [docs/operations/deploy-compose.md](docs/operations/deploy-compose.md)
 
+TLS profile compose stack (HTTPS termination at Nginx):
+
+```powershell
+docker compose -f docker-compose.prod.tls.yml up -d
+```
+
+TLS deployment guide: [docs/operations/deploy-compose-tls.md](docs/operations/deploy-compose-tls.md)
+
 ## Default Public Catalog
 
 Public demo coaches/courses are managed in one place: [app/public_catalog.py](app/public_catalog.py).
