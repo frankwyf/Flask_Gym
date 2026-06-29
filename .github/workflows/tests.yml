@@ -141,3 +141,5 @@ jobs:
             flask-gym-image.tar
             Dockerfile
             requirements.txt
+            docker-compose.prod.yml
+            deploy/nginx/flask-gym.conf

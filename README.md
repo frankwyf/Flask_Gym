@@ -142,6 +142,14 @@ docker run --rm -p 8000:8000 --env SECRET_KEY=change-me flask-gym:local
 
 Open: `http://127.0.0.1:8000`
 
+Production-like compose stack (app + nginx reverse proxy):
+
+```powershell
+docker compose -f docker-compose.prod.yml up -d
+```
+
+Operational guide: [docs/operations/deploy-compose.md](docs/operations/deploy-compose.md)
+
 ## Default Public Catalog
 
 Public demo coaches/courses are managed in one place: [app/public_catalog.py](app/public_catalog.py).
@@ -239,7 +247,7 @@ Pipeline stages:
 
 - Release workflow: [.github/workflows/release.yml](.github/workflows/release.yml)
 	- Trigger on SemVer tags (`v*`) or manually via `workflow_dispatch`.
-	- Produces release bundles (`zip`, `tar.gz`) and publishes GitHub Release with auto-generated notes.
+	- Produces release bundles (`zip`, `tar.gz`) with checksum manifest and publishes GitHub Release with auto-generated notes.
 - Rollback playbook: [docs/operations/rollback.md](docs/operations/rollback.md)
 
 ## License
