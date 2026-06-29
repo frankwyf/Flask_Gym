@@ -113,6 +113,7 @@ Open: `http://127.0.0.1:5000`
 - Metrics endpoint can be protected using `METRICS_TOKEN` through `X-Metrics-Token` header or `?token=` query.
 - Metrics naming prefix is configurable using `METRICS_NAMESPACE`.
 - Request latency histogram buckets are configurable via `METRICS_HISTOGRAM_BUCKETS`.
+- SLO helper series are exported: error rate and latency-compliance ratio.
 
 ## Security Baseline
 
@@ -189,6 +190,8 @@ Production runtime knobs:
 - `ERROR_LOG_SAMPLE_RATE`: sampled exception logging ratio (`0.0`-`1.0`).
 - `METRICS_ENABLED`, `METRICS_NAMESPACE`, `METRICS_TOKEN`: metrics endpoint controls.
 - `METRICS_HISTOGRAM_BUCKETS`: comma-separated request-latency bucket boundaries in seconds.
+- `METRICS_SLO_LATENCY_TARGET_MS`: latency target used for compliance ratio calculation.
+- `METRICS_SLO_ERROR_STATUS_MIN`: minimum HTTP status counted as SLO error (default `500`).
 
 See [configs/env.example](configs/env.example) for a full list.
 

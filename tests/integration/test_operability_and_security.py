@@ -35,6 +35,8 @@ def test_metrics_endpoint_exposes_prometheus_payload(client):
     assert "flask_gym_requests_total" in payload
     assert "# HELP flask_gym_request_latency_seconds_bucket" in payload
     assert 'le="+Inf"' in payload
+    assert "# HELP flask_gym_slo_error_rate" in payload
+    assert "# HELP flask_gym_slo_latency_compliance_ratio" in payload
 
 
 def test_metrics_endpoint_requires_token_when_configured(client):

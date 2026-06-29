@@ -43,3 +43,4 @@ All notable changes to this project are documented in this file.
 - CI quality gate now enforces dependency vulnerability scanning with `pip-audit`.
 - CI quality gate now generates and uploads CycloneDX SBOM artifacts.
 - Runtime metrics now expose configurable request-latency histogram buckets for stronger alerting.
+- Runtime metrics now include SLO helper series for error rate and latency compliance.

@@ -30,6 +30,7 @@ _METRICS_LOCK = threading.Lock()
 _REQUEST_COUNT_METRICS = {}
 _REQUEST_LATENCY_METRICS = {}
 _REQUEST_LATENCY_HISTOGRAM = {}
+_REQUEST_SLO_METRICS = {"total": 0, "errors": 0, "latency_good": 0}
 _EXCEPTIONS_TOTAL = 0
 _SYSTEM_RANDOM = secrets.SystemRandom()
 
@@ -90,6 +91,27 @@ def _record_request_metrics(method, path_label, status_code, latency_seconds):
                 histogram["bucket_counts"][bound] += 1
         histogram["count"] += 1
 
+        try:
+            numeric_status = int(status_code)
+        except (TypeError, ValueError):
+            numeric_status = 0
+
+        try:
+            error_status_min = int(app.config.get("METRICS_SLO_ERROR_STATUS_MIN", 500))
+        except (TypeError, ValueError):
+            error_status_min = 500
+
+        try:
+            latency_target_seconds = float(app.config.get("METRICS_SLO_LATENCY_TARGET_MS", 500.0)) / 1000.0
+        except (TypeError, ValueError):
+            latency_target_seconds = 0.5
+
+        _REQUEST_SLO_METRICS["total"] += 1
+        if numeric_status >= error_status_min:
+            _REQUEST_SLO_METRICS["errors"] += 1
+        if latency_seconds <= max(latency_target_seconds, 0.0):
+            _REQUEST_SLO_METRICS["latency_good"] += 1
+
 
 def _record_exception_metric():
     global _EXCEPTIONS_TOTAL
@@ -109,6 +131,7 @@ def render_metrics_payload():
             for k, v in _REQUEST_LATENCY_HISTOGRAM.items()
         }
         exceptions_total = _EXCEPTIONS_TOTAL
+        slo_metrics = dict(_REQUEST_SLO_METRICS)
 
     requests_total_metric = _metric_name("requests_total")
     latency_sum_metric = _metric_name("request_latency_seconds_sum")
@@ -116,6 +139,21 @@ def render_metrics_payload():
     latency_bucket_metric = _metric_name("request_latency_seconds_bucket")
     exceptions_total_metric = _metric_name("exceptions_total")
     uptime_seconds_metric = _metric_name("uptime_seconds")
+    slo_requests_total_metric = _metric_name("slo_requests_total")
+    slo_errors_total_metric = _metric_name("slo_errors_total")
+    slo_error_rate_metric = _metric_name("slo_error_rate")
+    slo_latency_compliance_metric = _metric_name("slo_latency_compliance_ratio")
+    slo_latency_target_metric = _metric_name("slo_latency_target_seconds")
+
+    total_requests = max(int(slo_metrics.get("total", 0)), 0)
+    total_errors = max(int(slo_metrics.get("errors", 0)), 0)
+    total_latency_good = max(int(slo_metrics.get("latency_good", 0)), 0)
+    error_rate = (total_errors / total_requests) if total_requests else 0.0
+    latency_compliance_ratio = (total_latency_good / total_requests) if total_requests else 0.0
+    try:
+        latency_target_seconds = float(app.config.get("METRICS_SLO_LATENCY_TARGET_MS", 500.0)) / 1000.0
+    except (TypeError, ValueError):
+        latency_target_seconds = 0.5
 
     lines = [
         f"# HELP {requests_total_metric} Total HTTP requests handled by Flask Gym.",
@@ -193,6 +231,21 @@ def render_metrics_payload():
             f"# HELP {exceptions_total_metric} Total unhandled request exceptions.",
             f"# TYPE {exceptions_total_metric} counter",
             f"{exceptions_total_metric} {exceptions_total}",
+            f"# HELP {slo_requests_total_metric} Total requests considered for SLO evaluation.",
+            f"# TYPE {slo_requests_total_metric} counter",
+            f"{slo_requests_total_metric} {total_requests}",
+            f"# HELP {slo_errors_total_metric} Total SLO-qualifying error responses.",
+            f"# TYPE {slo_errors_total_metric} counter",
+            f"{slo_errors_total_metric} {total_errors}",
+            f"# HELP {slo_error_rate_metric} Rolling error ratio derived from SLO counters.",
+            f"# TYPE {slo_error_rate_metric} gauge",
+            f"{slo_error_rate_metric} {error_rate:.6f}",
+            f"# HELP {slo_latency_compliance_metric} Ratio of requests under configured SLO latency target.",
+            f"# TYPE {slo_latency_compliance_metric} gauge",
+            f"{slo_latency_compliance_metric} {latency_compliance_ratio:.6f}",
+            f"# HELP {slo_latency_target_metric} Current latency SLO target in seconds.",
+            f"# TYPE {slo_latency_target_metric} gauge",
+            f"{slo_latency_target_metric} {max(latency_target_seconds, 0.0):.6f}",
             f"# HELP {uptime_seconds_metric} Process uptime in seconds.",
             f"# TYPE {uptime_seconds_metric} gauge",
             f"{uptime_seconds_metric} {max(time.time() - _PROCESS_STARTED_AT, 0):.2f}",
