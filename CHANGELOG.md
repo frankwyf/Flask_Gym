@@ -27,6 +27,7 @@ All notable changes to this project are documented in this file.
 - Added strict release-signature verification script with tag-bound workflow identity checks.
 - Added TLS compose deployment profile and Nginx HTTPS reverse-proxy configuration template.
 - Added `/sloz` endpoint for token-guarded JSON SLO status snapshots.
+- Added Prometheus alert-rule template and monitoring operations guide.
 
 ### Changed
 

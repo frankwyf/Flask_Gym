@@ -115,6 +115,8 @@ Open: `http://127.0.0.1:5000`
 - Metrics naming prefix is configurable using `METRICS_NAMESPACE`.
 - Request latency histogram buckets are configurable via `METRICS_HISTOGRAM_BUCKETS`.
 - SLO helper series are exported: error rate and latency-compliance ratio.
+- Prometheus alert rule template: [deploy/monitoring/flask-gym-alert-rules.yml](deploy/monitoring/flask-gym-alert-rules.yml)
+- Monitoring guide: [docs/operations/monitoring-prometheus.md](docs/operations/monitoring-prometheus.md)
 
 ## Security Baseline
 

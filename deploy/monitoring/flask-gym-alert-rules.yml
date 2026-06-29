@@ -1,0 +1,33 @@
+groups:
+  - name: flask-gym-slo
+    interval: 30s
+    rules:
+      - alert: FlaskGymHighServerErrorRate
+        expr: flask_gym_slo_error_rate > 0.03
+        for: 5m
+        labels:
+          severity: critical
+          service: flask-gym
+        annotations:
+          summary: "Flask Gym server error rate is above threshold"
+          description: "The rolling SLO error rate is above 3% for more than 5 minutes."
+
+      - alert: FlaskGymLowLatencyCompliance
+        expr: flask_gym_slo_latency_compliance_ratio < 0.95
+        for: 10m
+        labels:
+          severity: warning
+          service: flask-gym
+        annotations:
+          summary: "Flask Gym latency compliance degraded"
+          description: "Latency compliance ratio has remained below 95% for more than 10 minutes."
+
+      - alert: FlaskGymNoTrafficObserved
+        expr: increase(flask_gym_requests_total[10m]) == 0
+        for: 15m
+        labels:
+          severity: info
+          service: flask-gym
+        annotations:
+          summary: "Flask Gym observed no traffic"
+          description: "No requests have been recorded for the last 10 minutes."
