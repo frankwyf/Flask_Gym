@@ -2,7 +2,7 @@ import datetime
 import json
 import os
 import time
-from app import app, build_metrics_response, db, bcrypt, mail, metrics_token_is_valid
+from app import app, build_metrics_response, db, bcrypt, get_slo_snapshot, mail, metrics_token_is_valid
 from app.forms import ManagerLogin, ForgetPassword, UpdateAccountFrom, ResetPassword, \
     ManagerAccountFrom, Membership, UpdateCoachFrom, PostFrom, NewCourse
 from app.model import Coach, Customer, Course, Health, Manager, Post, Connect
@@ -55,6 +55,19 @@ def metrics():
         return jsonify({"status": "forbidden"}), 403
 
     return build_metrics_response()
+
+
+@app.route('/sloz', methods=['GET'])
+def sloz():
+    if not app.config.get("METRICS_ENABLED", True):
+        return jsonify({"status": "disabled"}), 404
+
+    provided_token = request.headers.get("X-Metrics-Token") or request.args.get("token") or ""
+    if not metrics_token_is_valid(provided_token):
+        app.logger.warning("SLO endpoint token validation failed.")
+        return jsonify({"status": "forbidden"}), 403
+
+    return jsonify({"status": "ok", "slo": get_slo_snapshot()}), 200
 
 @app.route('/register')
 def register():

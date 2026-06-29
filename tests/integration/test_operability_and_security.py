@@ -66,6 +66,33 @@ def test_metrics_endpoint_can_be_disabled(client):
         app.config["METRICS_ENABLED"] = previous_state
 
 
+def test_sloz_endpoint_returns_slo_snapshot(client):
+    client.get("/")
+    response = client.get("/sloz")
+
+    assert response.status_code == 200
+    payload = response.get_json()
+    assert payload["status"] == "ok"
+    assert "slo" in payload
+    assert "error_rate" in payload["slo"]
+    assert "latency_compliance_ratio" in payload["slo"]
+
+
+def test_sloz_endpoint_requires_token_when_configured(client):
+    from app import app
+
+    previous_token = app.config.get("METRICS_TOKEN")
+    app.config["METRICS_TOKEN"] = "metrics-token-123"
+    try:
+        forbidden = client.get("/sloz")
+        assert forbidden.status_code == 403
+
+        allowed = client.get("/sloz", headers={"X-Metrics-Token": "metrics-token-123"})
+        assert allowed.status_code == 200
+    finally:
+        app.config["METRICS_TOKEN"] = previous_token
+
+
 def test_hsts_header_on_secure_requests_when_enabled(client):
     from app import app
 

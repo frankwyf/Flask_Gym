@@ -31,6 +31,7 @@ docker compose -f docker-compose.prod.tls.yml up -d
 curl -I http://127.0.0.1
 curl -k https://127.0.0.1/healthz
 curl -k https://127.0.0.1/readyz
+curl -k "https://127.0.0.1/sloz?token=<metrics-token>"
 ```
 
 Expected:

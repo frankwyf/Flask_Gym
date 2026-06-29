@@ -11,6 +11,7 @@ ANON_ALLOWED_EXACT_PATHS = {
     "/healthz",
     "/readyz",
     "/metrics",
+    "/sloz",
     "/newlogin",
     "/Managerlogin",
     "/Managers",

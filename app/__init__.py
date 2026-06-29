@@ -255,6 +255,35 @@ def render_metrics_payload():
     return "\n".join(lines) + "\n"
 
 
+def get_slo_snapshot():
+    with _METRICS_LOCK:
+        total_requests = max(int(_REQUEST_SLO_METRICS.get("total", 0)), 0)
+        total_errors = max(int(_REQUEST_SLO_METRICS.get("errors", 0)), 0)
+        total_latency_good = max(int(_REQUEST_SLO_METRICS.get("latency_good", 0)), 0)
+
+    error_rate = (total_errors / total_requests) if total_requests else 0.0
+    latency_compliance_ratio = (total_latency_good / total_requests) if total_requests else 0.0
+
+    try:
+        latency_target_ms = float(app.config.get("METRICS_SLO_LATENCY_TARGET_MS", 500.0))
+    except (TypeError, ValueError):
+        latency_target_ms = 500.0
+
+    try:
+        error_status_min = int(app.config.get("METRICS_SLO_ERROR_STATUS_MIN", 500))
+    except (TypeError, ValueError):
+        error_status_min = 500
+
+    return {
+        "total_requests": total_requests,
+        "total_errors": total_errors,
+        "error_rate": round(error_rate, 6),
+        "latency_compliance_ratio": round(latency_compliance_ratio, 6),
+        "latency_target_ms": latency_target_ms,
+        "error_status_min": error_status_min,
+    }
+
+
 def build_metrics_response():
     return Response(render_metrics_payload(), mimetype="text/plain; version=0.0.4")
 

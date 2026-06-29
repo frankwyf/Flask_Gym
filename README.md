@@ -98,6 +98,7 @@ Open: `http://127.0.0.1:5000`
 - `GET /healthz`: liveness endpoint for container/platform probes.
 - `GET /readyz`: readiness endpoint with database connectivity check.
 - `GET /metrics`: Prometheus-style runtime metrics endpoint (optional token guard).
+- `GET /sloz`: JSON SLO status endpoint for operators (same token guard as `/metrics`).
 - `X-Request-ID` response header is attached to each request.
 - Security response headers are included by default:
 	- `X-Content-Type-Options: nosniff`
