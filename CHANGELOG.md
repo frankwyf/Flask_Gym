@@ -29,6 +29,7 @@ All notable changes to this project are documented in this file.
 - Added `/sloz` endpoint for token-guarded JSON SLO status snapshots.
 - Added Prometheus alert-rule template and monitoring operations guide.
 - Release pipeline now emits a generated summary note artifact with deployment and verification references.
+- Added Prometheus and Alertmanager example configs with monitoring compose overlay.
 
 ### Changed
 

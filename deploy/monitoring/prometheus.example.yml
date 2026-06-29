@@ -1,0 +1,28 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 30s
+
+rule_files:
+  - /etc/prometheus/rules/flask-gym-alert-rules.yml
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: ["alertmanager:9093"]
+
+scrape_configs:
+  - job_name: flask-gym
+    metrics_path: /metrics
+    scheme: http
+    static_configs:
+      - targets: ["nginx:80"]
+    params:
+      token: ["replace-with-metrics-token"]
+
+  - job_name: flask-gym-sloz
+    metrics_path: /sloz
+    scheme: http
+    static_configs:
+      - targets: ["nginx:80"]
+    params:
+      token: ["replace-with-metrics-token"]

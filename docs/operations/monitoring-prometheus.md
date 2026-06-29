@@ -37,7 +37,31 @@ It includes:
 - low latency compliance alert (`< 95%`)
 - no traffic observed alert
 
-## 4. Prometheus scrape example
+## 4. Example config files
+
+Included templates:
+
+- `deploy/monitoring/prometheus.example.yml`
+- `deploy/monitoring/alertmanager.example.yml`
+- `deploy/monitoring/flask-gym-alert-rules.yml`
+
+Update the metrics token and notification endpoints before using in production.
+
+## 5. Monitoring stack (Compose overlay)
+
+Start app stack first, then start monitoring overlay:
+
+```bash
+docker compose -f docker-compose.prod.yml up -d
+docker compose -f docker-compose.prod.yml -f docker-compose.monitoring.yml up -d
+```
+
+Access:
+
+- Prometheus: `http://127.0.0.1:9090`
+- Alertmanager: `http://127.0.0.1:9093`
+
+## 6. Prometheus scrape example
 
 ```yaml
 scrape_configs:
@@ -49,7 +73,7 @@ scrape_configs:
       token: ["replace-with-metrics-token"]
 ```
 
-## 5. Operational recommendations
+## 7. Operational recommendations
 
 - Keep alert thresholds aligned with your real SLOs.
 - Route critical alerts to on-call channels.
