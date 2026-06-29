@@ -33,6 +33,8 @@ def test_metrics_endpoint_exposes_prometheus_payload(client):
     payload = response.get_data(as_text=True)
     assert "# HELP flask_gym_requests_total" in payload
     assert "flask_gym_requests_total" in payload
+    assert "# HELP flask_gym_request_latency_seconds_bucket" in payload
+    assert 'le="+Inf"' in payload
 
 
 def test_metrics_endpoint_requires_token_when_configured(client):

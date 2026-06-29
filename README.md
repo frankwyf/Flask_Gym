@@ -112,6 +112,7 @@ Open: `http://127.0.0.1:5000`
 - Unhandled request exceptions are sampled into error logs via `ERROR_LOG_SAMPLE_RATE`.
 - Metrics endpoint can be protected using `METRICS_TOKEN` through `X-Metrics-Token` header or `?token=` query.
 - Metrics naming prefix is configurable using `METRICS_NAMESPACE`.
+- Request latency histogram buckets are configurable via `METRICS_HISTOGRAM_BUCKETS`.
 
 ## Security Baseline
 
@@ -179,6 +180,7 @@ Production runtime knobs:
 - `ENABLE_STRUCTURED_LOGGING`: emit structured JSON request logs.
 - `ERROR_LOG_SAMPLE_RATE`: sampled exception logging ratio (`0.0`-`1.0`).
 - `METRICS_ENABLED`, `METRICS_NAMESPACE`, `METRICS_TOKEN`: metrics endpoint controls.
+- `METRICS_HISTOGRAM_BUCKETS`: comma-separated request-latency bucket boundaries in seconds.
 
 See [configs/env.example](configs/env.example) for a full list.
 

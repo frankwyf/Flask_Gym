@@ -47,6 +47,28 @@ def _env_float(name, default):
         return default
 
 
+def _env_csv_floats(name, default_values):
+    raw = os.getenv(name)
+    if raw is None:
+        return tuple(default_values)
+
+    parsed = []
+    for part in raw.split(","):
+        part = part.strip()
+        if not part:
+            continue
+        try:
+            parsed.append(float(part))
+        except ValueError:
+            continue
+
+    if not parsed:
+        return tuple(default_values)
+
+    # Keep deterministic ordering and drop duplicates.
+    return tuple(sorted(set(parsed)))
+
+
 class Config:
     """Application configuration loaded from environment variables."""
 
@@ -82,6 +104,10 @@ class Config:
     ERROR_LOG_SAMPLE_RATE = _env_float("ERROR_LOG_SAMPLE_RATE", 0.2)
     METRICS_ENABLED = _env_flag("METRICS_ENABLED", True)
     METRICS_TOKEN = os.getenv("METRICS_TOKEN", "")
+    METRICS_HISTOGRAM_BUCKETS = _env_csv_floats(
+        "METRICS_HISTOGRAM_BUCKETS",
+        (0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1.0, 2.5, 5.0),
+    )
 
     SQLALCHEMY_DATABASE_URI = os.getenv(
         "DATABASE_URL",

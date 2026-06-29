@@ -29,8 +29,25 @@ _PROCESS_STARTED_AT = time.time()
 _METRICS_LOCK = threading.Lock()
 _REQUEST_COUNT_METRICS = {}
 _REQUEST_LATENCY_METRICS = {}
+_REQUEST_LATENCY_HISTOGRAM = {}
 _EXCEPTIONS_TOTAL = 0
 _SYSTEM_RANDOM = secrets.SystemRandom()
+
+
+def _latency_buckets():
+    configured = app.config.get(
+        "METRICS_HISTOGRAM_BUCKETS",
+        (0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1.0, 2.5, 5.0),
+    )
+    buckets = []
+    for raw in configured:
+        try:
+            value = float(raw)
+        except (TypeError, ValueError):
+            continue
+        if value > 0:
+            buckets.append(value)
+    return sorted(set(buckets))
 
 
 def _normalize_metric_path_label():
@@ -60,6 +77,19 @@ def _record_request_metrics(method, path_label, status_code, latency_seconds):
         metrics["sum"] += latency_seconds
         metrics["count"] += 1
 
+        histogram = _REQUEST_LATENCY_HISTOGRAM.setdefault(
+            latency_key,
+            {
+                "bucket_counts": {},
+                "count": 0,
+            },
+        )
+        for bound in _latency_buckets():
+            histogram["bucket_counts"].setdefault(bound, 0)
+            if latency_seconds <= bound:
+                histogram["bucket_counts"][bound] += 1
+        histogram["count"] += 1
+
 
 def _record_exception_metric():
     global _EXCEPTIONS_TOTAL
@@ -71,11 +101,19 @@ def render_metrics_payload():
     with _METRICS_LOCK:
         request_counts = dict(_REQUEST_COUNT_METRICS)
         request_latencies = {k: dict(v) for k, v in _REQUEST_LATENCY_METRICS.items()}
+        latency_histogram = {
+            k: {
+                "bucket_counts": dict(v.get("bucket_counts", {})),
+                "count": int(v.get("count", 0)),
+            }
+            for k, v in _REQUEST_LATENCY_HISTOGRAM.items()
+        }
         exceptions_total = _EXCEPTIONS_TOTAL
 
     requests_total_metric = _metric_name("requests_total")
     latency_sum_metric = _metric_name("request_latency_seconds_sum")
     latency_count_metric = _metric_name("request_latency_seconds_count")
+    latency_bucket_metric = _metric_name("request_latency_seconds_bucket")
     exceptions_total_metric = _metric_name("exceptions_total")
     uptime_seconds_metric = _metric_name("uptime_seconds")
 
@@ -105,6 +143,37 @@ def render_metrics_payload():
         lines.append(
             "%s{method=\"%s\",path=\"%s\"} %.6f"
             % (latency_sum_metric, _prometheus_escape(method), _prometheus_escape(path_label), values["sum"])
+        )
+
+    lines.extend(
+        [
+            f"# HELP {latency_bucket_metric} Histogram buckets for HTTP request latency in seconds.",
+            f"# TYPE {latency_bucket_metric} histogram",
+        ]
+    )
+    for (method, path_label), values in sorted(latency_histogram.items()):
+        cumulative = 0
+        for bound in _latency_buckets():
+            bucket_count = int(values["bucket_counts"].get(bound, 0))
+            cumulative = bucket_count
+            lines.append(
+                "%s{method=\"%s\",path=\"%s\",le=\"%.6g\"} %s"
+                % (
+                    latency_bucket_metric,
+                    _prometheus_escape(method),
+                    _prometheus_escape(path_label),
+                    bound,
+                    cumulative,
+                )
+            )
+        lines.append(
+            "%s{method=\"%s\",path=\"%s\",le=\"+Inf\"} %s"
+            % (
+                latency_bucket_metric,
+                _prometheus_escape(method),
+                _prometheus_escape(path_label),
+                int(values.get("count", 0)),
+            )
         )
 
     lines.extend(

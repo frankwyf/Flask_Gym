@@ -39,3 +39,4 @@ All notable changes to this project are documented in this file.
 - Runtime supports sampled exception logging and structured request logs by default.
 - CI quality gate now enforces dependency vulnerability scanning with `pip-audit`.
 - CI quality gate now generates and uploads CycloneDX SBOM artifacts.
+- Runtime metrics now expose configurable request-latency histogram buckets for stronger alerting.
