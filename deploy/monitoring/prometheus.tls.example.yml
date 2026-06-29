@@ -1,0 +1,38 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 30s
+
+rule_files:
+  - /etc/prometheus/rules/flask-gym-alert-rules.yml
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: ["alertmanager:9093"]
+
+scrape_configs:
+  - job_name: flask-gym-https
+    metrics_path: /metrics
+    scheme: https
+    tls_config:
+      insecure_skip_verify: true
+    static_configs:
+      - targets: ["nginx:443"]
+    params:
+      token: ["replace-with-metrics-token"]
+
+  - job_name: flask-gym-sloz-https
+    metrics_path: /sloz
+    scheme: https
+    tls_config:
+      insecure_skip_verify: true
+    static_configs:
+      - targets: ["nginx:443"]
+    params:
+      token: ["replace-with-metrics-token"]
+
+# For production, prefer full certificate validation:
+# tls_config:
+#   ca_file: /etc/prometheus/certs/ca.pem
+#   cert_file: /etc/prometheus/certs/client.pem
+#   key_file: /etc/prometheus/certs/client-key.pem

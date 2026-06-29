@@ -144,8 +144,10 @@ jobs:
             docker-compose.prod.yml
             docker-compose.prod.tls.yml
             docker-compose.monitoring.yml
+            docker-compose.monitoring.tls.yml
             deploy/nginx/flask-gym.conf
             deploy/nginx/flask-gym.tls.conf
             deploy/monitoring/flask-gym-alert-rules.yml
             deploy/monitoring/prometheus.example.yml
+            deploy/monitoring/prometheus.tls.example.yml
             deploy/monitoring/alertmanager.example.yml

@@ -42,6 +42,7 @@ It includes:
 Included templates:
 
 - `deploy/monitoring/prometheus.example.yml`
+- `deploy/monitoring/prometheus.tls.example.yml`
 - `deploy/monitoring/alertmanager.example.yml`
 - `deploy/monitoring/flask-gym-alert-rules.yml`
 
@@ -56,10 +57,19 @@ docker compose -f docker-compose.prod.yml up -d
 docker compose -f docker-compose.prod.yml -f docker-compose.monitoring.yml up -d
 ```
 
+TLS app stack with TLS monitoring overlay:
+
+```bash
+docker compose -f docker-compose.prod.tls.yml up -d
+docker compose -f docker-compose.prod.tls.yml -f docker-compose.monitoring.tls.yml up -d
+```
+
 Access:
 
 - Prometheus: `http://127.0.0.1:9090`
 - Alertmanager: `http://127.0.0.1:9093`
+
+When using TLS profile, Prometheus scrapes `https://nginx:443` with the TLS example config.
 
 ## 6. Prometheus scrape example
 

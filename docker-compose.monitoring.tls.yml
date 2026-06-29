@@ -1,0 +1,31 @@
+services:
+  prometheus:
+    image: prom/prometheus:v2.54.1
+    restart: unless-stopped
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--web.enable-lifecycle"
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./deploy/monitoring/prometheus.tls.example.yml:/etc/prometheus/prometheus.yml:ro
+      - ./deploy/monitoring/flask-gym-alert-rules.yml:/etc/prometheus/rules/flask-gym-alert-rules.yml:ro
+      - prometheus_data:/prometheus
+    networks:
+      - default
+
+  alertmanager:
+    image: prom/alertmanager:v0.27.0
+    restart: unless-stopped
+    command:
+      - "--config.file=/etc/alertmanager/alertmanager.yml"
+    ports:
+      - "9093:9093"
+    volumes:
+      - ./deploy/monitoring/alertmanager.example.yml:/etc/alertmanager/alertmanager.yml:ro
+    networks:
+      - default
+
+volumes:
+  prometheus_data:
