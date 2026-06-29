@@ -150,6 +150,13 @@ Key variables:
 	- MySQL example: `mysql+pymysql://user:password@127.0.0.1:3306/gym`
 - `MAIL_SERVER`, `MAIL_PORT`, `MAIL_USERNAME`, `MAIL_PASSWORD`, `MAIL_DEFAULT_SENDER`
 
+Production runtime knobs:
+
+- `STRICT_CONFIG`: when true, app startup fails if `SECRET_KEY` is default or secure cookies are disabled outside debug mode.
+- `USE_PROXY_FIX`: when true, enables `ProxyFix` middleware for reverse-proxy deployments.
+- `PROXY_FIX_X_FOR`, `PROXY_FIX_X_PROTO`, `PROXY_FIX_X_HOST`, `PROXY_FIX_X_PORT`: trusted proxy hop counts.
+- `MAX_CONTENT_LENGTH_MB`: upload/body size cap in MB (default `32`).
+
 See [configs/env.example](configs/env.example) for a full list.
 
 ## Security and Privacy Notes
