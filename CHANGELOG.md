@@ -14,6 +14,8 @@ All notable changes to this project are documented in this file.
 - Dashboard visual stage module with animated metric cards.
 - Containerization assets: `Dockerfile` and `.dockerignore`.
 - Integration tests for operability/security headers and upgraded dashboard surface.
+- Template engineering assets: `.editorconfig`, `pyproject.toml`, and `.pre-commit-config.yaml`.
+- Open source collaboration templates: PR template, issue forms, and Dependabot config.
 
 ### Changed
 
@@ -21,3 +23,5 @@ All notable changes to this project are documented in this file.
 - CI workflow upgraded to a multi-stage CI/CD pipeline with quality gate,
   Python matrix testing, artifact publishing, and container build packaging.
 - Default security-oriented Flask session configuration hardening.
+- CI workflow hardened with least-privilege permissions, concurrency control, and stricter Bandit gate.
+- Anonymous-route guard logic refactored into maintainable allowlist constants.

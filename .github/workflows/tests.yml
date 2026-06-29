@@ -9,9 +9,17 @@ on:
       - main
   workflow_dispatch:
 
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   quality:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     steps:
       - name: Checkout
@@ -36,7 +44,6 @@ jobs:
       - name: Security scan (Bandit)
         run: |
           bandit -q -r app -x app/static -f txt -o bandit-report.txt
-        continue-on-error: true
 
       - name: Upload security report
         uses: actions/upload-artifact@v4
@@ -44,10 +51,12 @@ jobs:
         with:
           name: bandit-report
           path: bandit-report.txt
+          if-no-files-found: warn
 
   test:
     runs-on: ubuntu-latest
     needs: quality
+    timeout-minutes: 20
     strategy:
       fail-fast: false
       matrix:
@@ -80,11 +89,13 @@ jobs:
           path: |
             reports/junit-${{ matrix.python-version }}.xml
             coverage.xml
+          if-no-files-found: warn
 
   build-package:
     runs-on: ubuntu-latest
     needs: test
     if: github.ref == 'refs/heads/main'
+    timeout-minutes: 20
 
     steps:
       - name: Checkout
@@ -92,7 +103,7 @@ jobs:
 
       - name: Build application container
         run: |
-          docker build -t flask-gym:${{ github.sha }} .
+          docker build --pull -t flask-gym:${{ github.sha }} .
 
       - name: Save container image
         run: |
