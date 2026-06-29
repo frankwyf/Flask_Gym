@@ -24,4 +24,5 @@ All notable changes to this project are documented in this file.
   Python matrix testing, artifact publishing, and container build packaging.
 - Default security-oriented Flask session configuration hardening.
 - CI workflow hardened with least-privilege permissions, concurrency control, and stricter Bandit gate.
+- GitHub Actions major versions updated (`checkout@v5`, `setup-python@v6`, `upload-artifact@v5`) to remove Node 20 runtime deprecation warnings.
 - Anonymous-route guard logic refactored into maintainable allowlist constants.

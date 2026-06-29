@@ -23,10 +23,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.12"
           cache: "pip"
@@ -46,7 +46,7 @@ jobs:
           bandit -q -r app -x app/static -f txt -o bandit-report.txt
 
       - name: Upload security report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: always()
         with:
           name: bandit-report
@@ -64,10 +64,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
           cache: "pip"
@@ -82,7 +82,7 @@ jobs:
           python -m pytest -q --junitxml=reports/junit-${{ matrix.python-version }}.xml --cov=app --cov-config=configs/.coveragerc --cov-report=xml
 
       - name: Upload test artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: always()
         with:
           name: test-artifacts-${{ matrix.python-version }}
@@ -99,7 +99,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Build application container
         run: |
@@ -110,7 +110,7 @@ jobs:
           docker save flask-gym:${{ github.sha }} -o flask-gym-image.tar
 
       - name: Upload deployment bundle
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: flask-gym-deployment-bundle
           path: |
