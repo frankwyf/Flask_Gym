@@ -1,8 +1,12 @@
 [run]
 source = app
 omit =
-    app/routes.py
+    app/static/*
 
 [report]
 show_missing = True
 skip_covered = False
+fail_under = 60
+exclude_lines =
+    pragma: no cover
+    if __name__ == .__main__.

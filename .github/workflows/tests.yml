@@ -103,7 +103,7 @@ jobs:
 
       - name: Run tests
         run: |
-          python -m pytest -q --junitxml=reports/junit-${{ matrix.python-version }}.xml --cov=app --cov-config=configs/.coveragerc --cov-report=xml
+          python -m pytest -q --junitxml=reports/junit-${{ matrix.python-version }}.xml --cov=app --cov-config=configs/.coveragerc --cov-report=xml --cov-report=term-missing
 
       - name: Upload test artifacts
         uses: actions/upload-artifact@v5
@@ -114,6 +114,11 @@ jobs:
             reports/junit-${{ matrix.python-version }}.xml
             coverage.xml
           if-no-files-found: warn
+
+      - name: Coverage threshold check
+        if: matrix.python-version == '3.12'
+        run: |
+          python -m coverage report --fail-under=60
 
   build-package:
     runs-on: ubuntu-latest
