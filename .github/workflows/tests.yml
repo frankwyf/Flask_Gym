@@ -54,7 +54,7 @@ jobs:
           cyclonedx-py requirements requirements.txt --output-file sbom.cdx.json --output-format JSON
 
       - name: Upload security report
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         if: always()
         with:
           name: security-reports
@@ -62,7 +62,7 @@ jobs:
           if-no-files-found: warn
 
       - name: Upload dependency audit report
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         if: always()
         with:
           name: pip-audit-report
@@ -70,7 +70,7 @@ jobs:
           if-no-files-found: warn
 
       - name: Upload SBOM artifact
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         if: always()
         with:
           name: sbom-cyclonedx
@@ -106,7 +106,7 @@ jobs:
           python -m pytest -q --junitxml=reports/junit-${{ matrix.python-version }}.xml --cov=app --cov-config=configs/.coveragerc --cov-report=xml --cov-report=term-missing
 
       - name: Upload test artifacts
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         if: always()
         with:
           name: test-artifacts-${{ matrix.python-version }}
@@ -139,7 +139,7 @@ jobs:
           docker save flask-gym:${{ github.sha }} -o flask-gym-image.tar
 
       - name: Upload deployment bundle
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         with:
           name: flask-gym-deployment-bundle
           path: |

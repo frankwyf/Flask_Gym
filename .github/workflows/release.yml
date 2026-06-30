@@ -110,7 +110,7 @@ jobs:
           sha256sum "flask-gym-${RELEASE_TAG}.zip" "flask-gym-${RELEASE_TAG}.tar.gz" > "flask-gym-${RELEASE_TAG}.sha256"
 
       - name: Upload release bundle artifact
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         with:
           name: release-bundle-${{ steps.resolve_tag.outputs.release_tag }}
           path: dist/
@@ -133,7 +133,7 @@ jobs:
             "dist/flask-gym-${RELEASE_TAG}.tar.gz"
 
       - name: Upload signature artifacts
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         with:
           name: release-signatures-${{ steps.resolve_tag.outputs.release_tag }}
           path: |
