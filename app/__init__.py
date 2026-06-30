@@ -14,6 +14,8 @@ from config import Config
 from config.settings import DEFAULT_SECRET_KEY
 from flask import Flask, Response, g, request
 from flask_bcrypt import Bcrypt
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 from flask_login import LoginManager
 from flask_mail import Mail
 from flask_migrate import Migrate
@@ -326,6 +328,13 @@ db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)  # object to hash the password
 migrate = Migrate(app, db)  # database migration
 login_manager = LoginManager(app)  # the login manager that manager the log in session
+limiter = Limiter(
+    get_remote_address,
+    app=app,
+    default_limits=["200 per day", "50 per hour"],
+    storage_uri="memory://",
+    enabled=app.config.get("RATELIMIT_ENABLED", True),
+)
 
 
 def create_app():

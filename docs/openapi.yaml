@@ -1,0 +1,284 @@
+openapi: "3.1.0"
+info:
+  title: Flask Gym API
+  version: "1.0.0"
+  description: |
+    REST API for the Flask Gym management system.
+    All endpoints require authentication via Flask-Login session cookie.
+  contact:
+    name: Flask Gym Contributors
+  license:
+    name: MIT
+
+servers:
+  - url: /api/v1
+    description: API v1
+
+paths:
+  /stats:
+    get:
+      summary: Dashboard statistics (Manager only)
+      tags: [Manager]
+      responses:
+        "200":
+          description: Gym statistics summary
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  total_customers: { type: integer }
+                  active_members: { type: integer }
+                  total_coaches: { type: integer }
+                  total_courses: { type: integer }
+                  online_customers: { type: integer }
+                  checkins_today: { type: integer }
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+  /bmi:
+    get:
+      summary: Get current user's BMI data (Customer only)
+      tags: [Health]
+      responses:
+        "200":
+          description: BMI calculation result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  weight_kg: { type: number }
+                  height_cm: { type: number }
+                  aim_weight_kg: { type: number }
+                  bmi: { type: number, nullable: true }
+                  bmi_category: { type: string, enum: [Underweight, Normal, Overweight, Obese, unknown] }
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          description: Health data not found
+
+  /profile:
+    get:
+      summary: Get current user's profile
+      tags: [Profile]
+      responses:
+        "200":
+          description: User profile data (varies by role)
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/CustomerProfile"
+                  - $ref: "#/components/schemas/CoachProfile"
+                  - $ref: "#/components/schemas/ManagerProfile"
+
+  /schedule:
+    get:
+      summary: Get upcoming class schedule
+      tags: [Schedule]
+      parameters:
+        - name: page
+          in: query
+          schema: { type: integer, default: 1 }
+        - name: per_page
+          in: query
+          schema: { type: integer, default: 10, maximum: 50 }
+      responses:
+        "200":
+          description: Paginated schedule
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaginatedCourses"
+
+  /courses:
+    get:
+      summary: List all courses
+      tags: [Schedule]
+      parameters:
+        - name: page
+          in: query
+          schema: { type: integer, default: 1 }
+        - name: per_page
+          in: query
+          schema: { type: integer, default: 10, maximum: 50 }
+      responses:
+        "200":
+          description: Paginated course list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaginatedCourses"
+
+  /attendance/checkin:
+    post:
+      summary: Check in to the gym (Customer only)
+      tags: [Attendance]
+      responses:
+        "201":
+          description: Successfully checked in
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: "checked_in" }
+                  record: { $ref: "#/components/schemas/AttendanceRecord" }
+        "409":
+          description: Already checked in today
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+  /attendance/checkout:
+    post:
+      summary: Check out of the gym (Customer only)
+      tags: [Attendance]
+      responses:
+        "200":
+          description: Successfully checked out
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: "checked_out" }
+                  record: { $ref: "#/components/schemas/AttendanceRecord" }
+        "404":
+          description: No open check-in found
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+  /attendance/history:
+    get:
+      summary: Get attendance history (Customer only)
+      tags: [Attendance]
+      parameters:
+        - name: limit
+          in: query
+          schema: { type: integer, default: 30, maximum: 90 }
+      responses:
+        "200":
+          description: Attendance history
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  history:
+                    type: array
+                    items: { $ref: "#/components/schemas/AttendanceRecord" }
+
+  /notifications:
+    get:
+      summary: Get notifications (Customer only)
+      tags: [Notifications]
+      responses:
+        "200":
+          description: List of notifications
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  notifications:
+                    type: array
+                    items: { $ref: "#/components/schemas/Notification" }
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+  /notifications/{notif_id}/read:
+    post:
+      summary: Mark a notification as read
+      tags: [Notifications]
+      parameters:
+        - name: notif_id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: Marked as read
+        "404":
+          description: Notification not found
+
+components:
+  responses:
+    Forbidden:
+      description: Access denied for current role
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error: { type: string, example: "forbidden" }
+
+  schemas:
+    AttendanceRecord:
+      type: object
+      properties:
+        id: { type: integer }
+        uid: { type: integer }
+        check_in: { type: string, format: date-time, nullable: true }
+        check_out: { type: string, format: date-time, nullable: true }
+        date: { type: string, format: date }
+        duration_minutes: { type: integer, nullable: true }
+
+    Notification:
+      type: object
+      properties:
+        id: { type: integer }
+        title: { type: string }
+        body: { type: string, nullable: true }
+        category: { type: string, enum: [info, reminder, alert] }
+        is_read: { type: boolean }
+        created_at: { type: string, format: date-time }
+
+    CustomerProfile:
+      type: object
+      properties:
+        id: { type: integer }
+        username: { type: string }
+        email: { type: string }
+        membership_status: { type: integer }
+        membership_expires_at: { type: string, format: date, nullable: true }
+        bmi: { type: number, nullable: true }
+        bmi_category: { type: string }
+        created_at: { type: string, format: date-time, nullable: true }
+
+    CoachProfile:
+      type: object
+      properties:
+        id: { type: integer }
+        username: { type: string }
+        email: { type: string }
+        speciality: { type: string }
+
+    ManagerProfile:
+      type: object
+      properties:
+        id: { type: integer }
+        username: { type: string }
+        email: { type: string }
+
+    CourseItem:
+      type: object
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        description: { type: string, nullable: true }
+        coach_id: { type: integer }
+        start: { type: string, format: date-time, nullable: true }
+        end: { type: string, format: date-time, nullable: true }
+        capacity: { type: integer }
+        enrolled_count: { type: integer }
+
+    PaginatedCourses:
+      type: object
+      properties:
+        courses:
+          type: array
+          items: { $ref: "#/components/schemas/CourseItem" }
+        total: { type: integer }
+        page: { type: integer }
+        pages: { type: integer }

@@ -4,6 +4,7 @@ from joserfc import jwk, jwt
 from joserfc.errors import JoseError
 from flask import session, request, redirect, url_for, flash
 from flask_login import UserMixin
+import datetime as _dt
 
 
 ANON_ALLOWED_EXACT_PATHS = {
@@ -12,6 +13,7 @@ ANON_ALLOWED_EXACT_PATHS = {
     "/readyz",
     "/metrics",
     "/sloz",
+    "/api/docs",
     "/newlogin",
     "/Managerlogin",
     "/Managers",
@@ -112,6 +114,8 @@ class Customer(db.Model, UserMixin):
     log = db.Column(db.Integer)  # 0 for offline, 1 for online
     sex = db.Column(db.Integer)  # 0 for unknown, 1 for male and 2 for female
     posts = db.Column(db.Integer)  # how many posts have been posted by this user, for user profile show
+    membership_expires_at = db.Column(db.Date, nullable=True)  # when current membership period expires
+    created_at = db.Column(db.DateTime, default=_dt.datetime.utcnow)
 
     def get_reset_token(self, **kwargs):
         # signature algorithm
@@ -236,6 +240,8 @@ class Course(db.Model):
     end = db.Column(db.DateTime)  # end time of the course
     video = db.Column(db.String(200))  # store the file oath for potential video of the course
     is_public_seed = db.Column(db.Integer, default=0)
+    capacity = db.Column(db.Integer, default=20)  # maximum students per course
+    enrolled_count = db.Column(db.Integer, default=0)  # current enrollment count
 
     def __int__(self, name, description, courseProfile, start, end, video):
         self.name = name
@@ -256,3 +262,50 @@ class Connect(db.Model):
         self.id = id
         self.cid = cid
         self.courseid = courseid
+
+
+# Attendance records: tracks gym check-in / check-out per customer per day
+class Attendance(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    uid = db.Column(db.Integer, db.ForeignKey('customer.id'), nullable=False)
+    check_in = db.Column(db.DateTime, nullable=False, default=_dt.datetime.utcnow)
+    check_out = db.Column(db.DateTime, nullable=True)  # None means still inside
+    date = db.Column(db.Date, nullable=False, default=_dt.date.today)
+
+    @property
+    def duration_minutes(self):
+        if self.check_out and self.check_in:
+            delta = self.check_out - self.check_in
+            return int(delta.total_seconds() / 60)
+        return None
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "uid": self.uid,
+            "check_in": self.check_in.isoformat() if self.check_in else None,
+            "check_out": self.check_out.isoformat() if self.check_out else None,
+            "date": self.date.isoformat() if self.date else None,
+            "duration_minutes": self.duration_minutes,
+        }
+
+
+# Notifications for members (announcements, reminders)
+class Notification(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    uid = db.Column(db.Integer, db.ForeignKey('customer.id'), nullable=True)  # None = broadcast
+    title = db.Column(db.String(100), nullable=False)
+    body = db.Column(db.String(500))
+    category = db.Column(db.String(20), default='info')  # info, reminder, alert
+    is_read = db.Column(db.Boolean, default=False)
+    created_at = db.Column(db.DateTime, default=_dt.datetime.utcnow)
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "title": self.title,
+            "body": self.body,
+            "category": self.category,
+            "is_read": self.is_read,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+        }

@@ -2,10 +2,10 @@ import datetime
 import json
 import os
 import time
-from app import app, build_metrics_response, db, bcrypt, get_slo_snapshot, mail, metrics_token_is_valid
+from app import app, build_metrics_response, db, bcrypt, get_slo_snapshot, limiter, mail, metrics_token_is_valid
 from app.forms import ManagerLogin, ForgetPassword, UpdateAccountFrom, ResetPassword, \
     ManagerAccountFrom, Membership, UpdateCoachFrom, PostFrom, NewCourse
-from app.model import Coach, Customer, Course, Health, Manager, Post, Connect
+from app.model import Coach, Customer, Course, Health, Manager, Post, Connect, Attendance, Notification
 from flask import render_template, flash, request, session, url_for, redirect, jsonify
 from flask_login import logout_user, login_user, current_user, login_required
 from flask_mail import Message
@@ -68,6 +68,18 @@ def sloz():
         return jsonify({"status": "forbidden"}), 403
 
     return jsonify({"status": "ok", "slo": get_slo_snapshot()}), 200
+
+
+@app.route('/api/docs', methods=['GET'])
+def api_docs():
+    """Serve the OpenAPI specification."""
+    spec_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'docs', 'openapi.yaml')
+    if not os.path.exists(spec_path):
+        return jsonify({"error": "spec not found"}), 404
+    with open(spec_path, 'r', encoding='utf-8') as f:
+        content = f.read()
+    return app.response_class(content, mimetype='text/yaml')
+
 
 @app.route('/register')
 def register():
@@ -241,20 +253,20 @@ def Managerlogin():  # log in a super admin
 
 
 @app.route('/Managers', methods=['POST', 'GET'])
+@limiter.limit("10 per minute")
 def Managers():  # log in a normal manager
     if request.method == 'POST':
         testname = request.form.get("name")
         testpassword = request.form.get("psw")
-        # check in database
-        checkuser = Manager.query.all()
-        checkuser.pop(0)  # all managers since the first one is super manager
-        for check in checkuser:
-            if (check.username == testname and
-                    bcrypt.check_password_hash(check.password, testpassword)):
-                name = check.username  # username should be passed to the home page
+        # Use indexed lookup rather than iterating all managers (O(1) vs O(n))
+        check = Manager.query.filter(
+            Manager.username == testname, Manager.aid != 1
+        ).first()
+        if check is not None:
+            if bcrypt.check_password_hash(check.password, testpassword):
+                name = check.username
                 try:
-                    check.log = 1  # set the login status to be online
-                    app.logger.info("Manager: " + check.username + " has logged in.")
+                    check.log = 1
                     db.session.commit()
                 except Exception as e:
                     db.session.rollback()
@@ -265,14 +277,11 @@ def Managers():  # log in a normal manager
                     session['role'] = 'Manager'
                 app.logger.info(check.username + " (manager) has logged in.")
                 return render_template("NormalManager.html", user=name, man='manager', role=check)
-            # if login fails, show error message
-            elif (check.username == testname and not bcrypt.check_password_hash(
-                    check.password, testpassword)):
+            else:
                 flash("Password is wrong! Please re-enter!", "error")
                 app.logger.warning(testname + " logged in failed! (Password error)")
                 return redirect(url_for('newlogin'))
-            # else, no such user
-        flash("No such user:" + testname + " ! Please register first!", "error")
+        flash("No such manager: " + testname + " !", "error")
         app.logger.warning(testname + " logged in failed! (No such manager)")
         return redirect(url_for('newlogin'))
     if request.method == 'GET':
@@ -282,67 +291,55 @@ def Managers():  # log in a normal manager
 
 
 @app.route('/CustomerLogin', methods=['GET', 'POST'])
+@limiter.limit("10 per minute")
 def CustomerLogin():
     if request.method == 'POST':
         testname = request.form.get("name")
         testpassword = request.form.get("psw")
         man = request.form.get("type")
         if man == "customer":
-            checkuser = Customer.query.all()  # all customers
-            for check in checkuser:
-                if (check.username == testname and
-                        bcrypt.check_password_hash(check.password, testpassword)):
-                    name = check.username  # username should be passed to the home page
-                    now = check.id
-                    health_person = Health.query.filter_by(uid=now).first()  # get the health data of this customer
+            # Use indexed lookup — avoids iterating all rows and leaking timing info
+            check = Customer.query.filter_by(username=testname).first()
+            if check is not None:
+                if bcrypt.check_password_hash(check.password, testpassword):
+                    health_person = Health.query.filter_by(uid=check.id).first()
                     try:
-                        check.log = 1  # set the login status to be online
+                        check.log = 1
                         db.session.commit()
                     except Exception as e:
                         db.session.rollback()
                         app.logger.error('%s', e)
                         raise e
-                    # calculate the age of a user
                     today = datetime.date.today()
                     birth = health_person.birthday
-                    if today > birth:
-                        age = today.year - birth.year
-                    else:
-                        age = today.year - birth.year - 1
-                    # login the user
+                    age = today.year - birth.year - (1 if today < birth.replace(year=today.year) else 0)
                     if request.form.get('remember'):
                         login_user(check, remember=True)
                         session['role'] = 'customer'
                     app.logger.info(check.username + " (customer) has logged in.")
-                    return render_template("Customerlogin.html", user=name, man=man, role=check, health=health_person,
-                                           age=age)
-                elif (check.username == testname and not bcrypt.check_password_hash(
-                        check.password, testpassword)):  # wrong password error
+                    return render_template("Customerlogin.html", user=check.username, man=man,
+                                           role=check, health=health_person, age=age)
+                else:
                     flash("Password is wrong! Please re-enter!", "error")
                     app.logger.warning(testname + " logged in denied! (Password error)")
                     return redirect(url_for('newlogin'))
         else:  # coach log in
-            checkuser = Coach.query.all()  # all coaches
-            for check in checkuser:
-                if (check.username == testname and
-                        bcrypt.check_password_hash(check.password, testpassword)):
-                    name = check.username  # username should be passed to the home page
+            check = Coach.query.filter_by(username=testname).first()
+            if check is not None:
+                if bcrypt.check_password_hash(check.password, testpassword):
                     try:
-                        check.log = 1  # set the login status to be online
+                        check.log = 1
                         db.session.commit()
-                        app.logger.info(name + " logged in successfully!")
                     except Exception as e:
                         db.session.rollback()
                         app.logger.error('%s', e)
                         raise e
-                    # login the user
                     if request.form.get('remember'):
                         login_user(check, remember=True)
                         session['role'] = 'Coach'
                     app.logger.info(check.username + " (coach) has logged in.")
-                    return render_template("Coachlogin.html", user=name, man=man, role=check)
-                elif (check.username == testname and not bcrypt.check_password_hash(
-                        check.password, testpassword)):  # wrong password error
+                    return render_template("Coachlogin.html", user=check.username, man=man, role=check)
+                else:
                     flash("Password is wrong! Please re-enter!", "error")
                     app.logger.warning(testname + " logged in denied! (Password error)")
                     return redirect(url_for('newlogin'))
@@ -489,12 +486,10 @@ def newCoach():  # sign up route for customers
             gender = 0
         # encrypt the password
         hashed_psw = bcrypt.generate_password_hash(request.form.get("psw")).decode('utf-8')
-        # validate inputs in data base
-        checkuser = Coach.query.all()  # all Coaches
-        for alluser in checkuser:
-            if alluser.username == newname:
-                flash("That user name has been taken! please choose another one!", 'error')
-                return render_template("NewCoach.html")
+        # validate inputs in data base — use indexed lookup
+        if Coach.query.filter_by(username=newname).first():
+            flash("That user name has been taken! please choose another one!", 'error')
+            return render_template("NewCoach.html")
         # save customer data into DB
         user = Coach()
         user.username = newname
@@ -537,12 +532,10 @@ def newManager():  # sign up route for manager
         mail = request.form.get("mailenter")
         # encrypt the password
         hashed_psw = bcrypt.generate_password_hash(request.form.get("psw")).decode('utf-8')
-        # validate inputs in data base
-        checkuser = Manager.query.all()  # all Coaches
-        for alluser in checkuser:
-            if alluser.username == newname:
-                flash("That user name has been taken! pelase choose another one!", 'error')
-                return render_template("NewCoach.html")
+        # validate inputs in data base — use indexed lookup
+        if Manager.query.filter_by(username=newname).first():
+            flash("That user name has been taken! please choose another one!", 'error')
+            return render_template("NewCoach.html")
         # save customer data into DB
         user = Manager()
         user.username = newname
@@ -587,12 +580,10 @@ def newAccount():  # sign up route for customers
         hashed_psw = bcrypt.generate_password_hash(
             request.form.get("psw")).decode('utf-8')
 
-        # validate inputs in data base
-        checkuser = Customer.query.all()  # all users
-        for all in checkuser:
-            if (all.username == newname):
-                flash("That user name has been taken! please choose another one!", 'error')
-                return render_template("register.html")
+        # validate inputs in data base — use indexed lookup instead of full scan
+        if Customer.query.filter_by(username=newname).first():
+            flash("That user name has been taken! please choose another one!", 'error')
+            return render_template("register.html")
         # save customer data into DB
         user = Customer()
         user.username = newname
@@ -617,10 +608,10 @@ def newAccount():  # sign up route for customers
             app.logger.warning("User registration failed.")
             app.logger.error('%s', e)
             raise e
-        currentuser = Customer.query.all()
+        db.session.refresh(user)
         # create a health data for shown
         data = Health()
-        data.uid = currentuser[len(currentuser) - 1].id
+        data.uid = user.id
         data.prefer = "None"
         data.height = 0
         data.weight = 0
@@ -1217,8 +1208,296 @@ def DeleteCourse():
                 app.logger.error('%s' + current_user.username + " Failed to deleted course:" + target_course.name, e)
                 raise e
         return redirect(url_for('CustomerLogin'))
+
+
+# ---------------------------------------------------------------------------
+# Utility helpers
+# ---------------------------------------------------------------------------
+
+def _calc_bmi(weight_kg: float, height_cm: float) -> float | None:
+    if not height_cm or height_cm <= 0:
+        return None
+    height_m = height_cm / 100.0
+    return round(weight_kg / (height_m ** 2), 1)
+
+
+def _bmi_category(bmi: float | None) -> str:
+    if bmi is None:
+        return "unknown"
+    if bmi < 18.5:
+        return "Underweight"
+    if bmi < 25.0:
+        return "Normal"
+    if bmi < 30.0:
+        return "Overweight"
+    return "Obese"
+
+
+# ---------------------------------------------------------------------------
+# REST API v1  (JSON)
+# ---------------------------------------------------------------------------
+
+@app.route('/api/v1/stats', methods=['GET'])
+@limiter.limit("30 per minute")
+@login_required
+def api_stats():
+    if session.get('role') != 'Manager':
+        return jsonify({"error": "forbidden"}), 403
+
+    total_customers = Customer.query.count()
+    active_members = Customer.query.filter_by(status=1).count()
+    total_coaches = Coach.query.count()
+    total_courses = Course.query.count()
+    online_customers = Customer.query.filter_by(log=1).count()
+
+    today = datetime.date.today()
+    checkins_today = Attendance.query.filter_by(date=today).count()
+
+    return jsonify({
+        "total_customers": total_customers,
+        "active_members": active_members,
+        "total_coaches": total_coaches,
+        "total_courses": total_courses,
+        "online_customers": online_customers,
+        "checkins_today": checkins_today,
+    }), 200
+
+
+@app.route('/api/v1/bmi', methods=['GET'])
+@login_required
+def api_bmi():
+    if session.get('role') != 'customer':
+        return jsonify({"error": "forbidden"}), 403
+
+    health = Health.query.filter_by(uid=current_user.id).first()
+    if not health:
+        return jsonify({"error": "health data not found"}), 404
+
+    bmi = _calc_bmi(health.weight, health.height)
+    return jsonify({
+        "weight_kg": health.weight,
+        "height_cm": health.height,
+        "aim_weight_kg": health.aim_weight,
+        "bmi": bmi,
+        "bmi_category": _bmi_category(bmi),
+    }), 200
+
+
+@app.route('/api/v1/attendance/checkin', methods=['POST'])
+@limiter.limit("5 per minute")
+@login_required
+def api_attendance_checkin():
+    if session.get('role') != 'customer':
+        return jsonify({"error": "forbidden"}), 403
+
+    today = datetime.date.today()
+    open_record = Attendance.query.filter_by(
+        uid=current_user.id, date=today, check_out=None
+    ).first()
+    if open_record:
+        return jsonify({"error": "already checked in", "record": open_record.to_dict()}), 409
+
+    record = Attendance()
+    record.uid = current_user.id
+    record.check_in = datetime.datetime.utcnow()
+    record.date = today
+    try:
+        db.session.add(record)
+        db.session.commit()
+        app.logger.info("%s checked in.", current_user.username)
+    except Exception as exc:
+        db.session.rollback()
+        app.logger.error("Attendance check-in failed: %s", exc)
+        return jsonify({"error": "database error"}), 500
+
+    return jsonify({"status": "checked_in", "record": record.to_dict()}), 201
+
+
+@app.route('/api/v1/attendance/checkout', methods=['POST'])
+@login_required
+def api_attendance_checkout():
+    if session.get('role') != 'customer':
+        return jsonify({"error": "forbidden"}), 403
+
+    today = datetime.date.today()
+    open_record = Attendance.query.filter_by(
+        uid=current_user.id, date=today, check_out=None
+    ).first()
+    if not open_record:
+        return jsonify({"error": "no open check-in found"}), 404
+
+    open_record.check_out = datetime.datetime.utcnow()
+    try:
+        db.session.commit()
+        app.logger.info("%s checked out. Duration: %s min.", current_user.username,
+                        open_record.duration_minutes)
+    except Exception as exc:
+        db.session.rollback()
+        app.logger.error("Attendance check-out failed: %s", exc)
+        return jsonify({"error": "database error"}), 500
+
+    return jsonify({"status": "checked_out", "record": open_record.to_dict()}), 200
+
+
+@app.route('/api/v1/attendance/history', methods=['GET'])
+@login_required
+def api_attendance_history():
+    if session.get('role') != 'customer':
+        return jsonify({"error": "forbidden"}), 403
+
+    limit = min(int(request.args.get('limit', 30)), 90)
+    records = (
+        Attendance.query
+        .filter_by(uid=current_user.id)
+        .order_by(Attendance.check_in.desc())
+        .limit(limit)
+        .all()
+    )
+    return jsonify({"history": [r.to_dict() for r in records]}), 200
+
+
+@app.route('/api/v1/schedule', methods=['GET'])
+@limiter.limit("30 per minute")
+@login_required
+def api_schedule():
+    """Return upcoming classes for the logged-in user or all classes for manager."""
+    role = session.get('role')
+    page = request.args.get('page', 1, type=int)
+    per_page = min(int(request.args.get('per_page', 10)), 50)
+    now = datetime.datetime.utcnow()
+
+    if role == 'Manager':
+        query = Course.query.filter(Course.start >= now).order_by(Course.start)
+    elif role == 'Coach':
+        query = Course.query.filter(
+            Course.cid == current_user.cid, Course.start >= now
+        ).order_by(Course.start)
+    elif role == 'customer':
+        enrolled_ids = [c.courseid for c in Connect.query.filter_by(id=current_user.id).all()]
+        if enrolled_ids:
+            query = Course.query.filter(
+                Course.id.in_(enrolled_ids), Course.start >= now
+            ).order_by(Course.start)
+        else:
+            return jsonify({"schedule": [], "total": 0, "page": page}), 200
     else:
-        return render_template("error.html")
+        return jsonify({"error": "forbidden"}), 403
+
+    paginated = query.paginate(page=page, per_page=per_page, error_out=False)
+    courses = [{
+        "id": c.id,
+        "name": c.name,
+        "description": c.description,
+        "start": c.start.isoformat() if c.start else None,
+        "end": c.end.isoformat() if c.end else None,
+        "capacity": c.capacity,
+        "enrolled_count": c.enrolled_count,
+    } for c in paginated.items]
+
+    return jsonify({
+        "schedule": courses,
+        "total": paginated.total,
+        "page": paginated.page,
+        "pages": paginated.pages,
+    }), 200
+
+
+@app.route('/api/v1/profile', methods=['GET'])
+@login_required
+def api_profile():
+    """Return the current user's profile info."""
+    role = session.get('role')
+    if role == 'customer':
+        health = Health.query.filter_by(uid=current_user.id).first()
+        bmi = _calc_bmi(health.weight, health.height) if health else None
+        return jsonify({
+            "id": current_user.id,
+            "username": current_user.username,
+            "email": current_user.Email,
+            "membership_status": current_user.status,
+            "membership_expires_at": str(current_user.membership_expires_at) if current_user.membership_expires_at else None,
+            "bmi": bmi,
+            "bmi_category": _bmi_category(bmi),
+            "created_at": current_user.created_at.isoformat() if current_user.created_at else None,
+        }), 200
+    elif role == 'Coach':
+        return jsonify({
+            "id": current_user.cid,
+            "username": current_user.username,
+            "email": current_user.Email,
+            "speciality": current_user.speciality,
+        }), 200
+    elif role == 'Manager':
+        return jsonify({
+            "id": current_user.aid,
+            "username": current_user.username,
+            "email": current_user.Email,
+        }), 200
+    return jsonify({"error": "forbidden"}), 403
+
+
+@app.route('/api/v1/courses', methods=['GET'])
+@limiter.limit("30 per minute")
+@login_required
+def api_courses():
+    """List all available courses with pagination."""
+    page = request.args.get('page', 1, type=int)
+    per_page = min(int(request.args.get('per_page', 10)), 50)
+
+    paginated = Course.query.order_by(Course.start.desc()).paginate(
+        page=page, per_page=per_page, error_out=False
+    )
+    courses = [{
+        "id": c.id,
+        "name": c.name,
+        "description": c.description,
+        "coach_id": c.cid,
+        "start": c.start.isoformat() if c.start else None,
+        "end": c.end.isoformat() if c.end else None,
+        "capacity": c.capacity,
+        "enrolled_count": c.enrolled_count,
+    } for c in paginated.items]
+
+    return jsonify({
+        "courses": courses,
+        "total": paginated.total,
+        "page": paginated.page,
+        "pages": paginated.pages,
+    }), 200
+
+
+@app.route('/api/v1/notifications', methods=['GET'])
+@login_required
+def api_notifications():
+    """Get notifications for the current customer (personal + broadcasts)."""
+    if session.get('role') != 'customer':
+        return jsonify({"error": "forbidden"}), 403
+
+    from sqlalchemy import or_
+    notifications = (
+        Notification.query
+        .filter(or_(Notification.uid == current_user.id, Notification.uid.is_(None)))
+        .order_by(Notification.created_at.desc())
+        .limit(20)
+        .all()
+    )
+    return jsonify({"notifications": [n.to_dict() for n in notifications]}), 200
+
+
+@app.route('/api/v1/notifications/<int:notif_id>/read', methods=['POST'])
+@login_required
+def api_notification_mark_read(notif_id):
+    """Mark a notification as read."""
+    if session.get('role') != 'customer':
+        return jsonify({"error": "forbidden"}), 403
+
+    notif = Notification.query.get(notif_id)
+    if not notif or (notif.uid is not None and notif.uid != current_user.id):
+        return jsonify({"error": "not found"}), 404
+
+    notif.is_read = True
+    db.session.commit()
+    return jsonify({"status": "ok"}), 200
 
 
 @app.route('/ShowAllCourse', methods=['POST', 'GET'])
@@ -1295,6 +1574,14 @@ def ShowMycourse():
     my_courses = Course.query.join(Connect, Course.id == Connect.courseid) \
         .join(Customer, Connect.id == current_user.id).paginate(page=page, per_page=3)
     return render_template("ajax/ShowMyCourses.html", user=current_user, course=my_courses)
+
+
+@app.route('/MemberDashboard', methods=['GET'])
+@login_required
+def MemberDashboard():
+    if session.get('role') != 'customer':
+        return render_template('error.html', errormessage="Only customers can view this page!")
+    return render_template("ajax/member_dashboard.html")
 
 
 @app.route('/ShowStudent', methods=['GET'])

@@ -76,6 +76,7 @@ class Config:
     SECRET_KEY = os.getenv("SECRET_KEY", DEFAULT_SECRET_KEY)
     DEBUG = _env_flag("DEBUG", False)
     TESTING = _env_flag("TESTING", False)
+    RATELIMIT_ENABLED = _env_flag("RATELIMIT_ENABLED", True)
     STRICT_CONFIG = _env_flag("STRICT_CONFIG", False)
     PREFERRED_URL_SCHEME = os.getenv("PREFERRED_URL_SCHEME", "https")
     METRICS_NAMESPACE = os.getenv("METRICS_NAMESPACE", "flask_gym")
