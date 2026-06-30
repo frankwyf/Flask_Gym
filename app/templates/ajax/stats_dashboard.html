@@ -1,0 +1,45 @@
+<div class="stats-dashboard">
+    <h3 class="section-title"><i class="glyphicon glyphicon-stats"></i> Dashboard Overview</h3>
+    <div class="stats-grid" id="stats-grid">
+        <div class="stat-card stat-card--primary">
+            <div class="stat-icon"><i class="glyphicon glyphicon-user"></i></div>
+            <div class="stat-value" id="stat-total-customers">-</div>
+            <div class="stat-label">Total Members</div>
+        </div>
+        <div class="stat-card stat-card--success">
+            <div class="stat-icon"><i class="glyphicon glyphicon-ok"></i></div>
+            <div class="stat-value" id="stat-active-members">-</div>
+            <div class="stat-label">Active Members</div>
+        </div>
+        <div class="stat-card stat-card--info">
+            <div class="stat-icon"><i class="glyphicon glyphicon-education"></i></div>
+            <div class="stat-value" id="stat-total-coaches">-</div>
+            <div class="stat-label">Coaches</div>
+        </div>
+        <div class="stat-card stat-card--warning">
+            <div class="stat-icon"><i class="glyphicon glyphicon-book"></i></div>
+            <div class="stat-value" id="stat-total-courses">-</div>
+            <div class="stat-label">Courses</div>
+        </div>
+        <div class="stat-card stat-card--danger">
+            <div class="stat-icon"><i class="glyphicon glyphicon-log-in"></i></div>
+            <div class="stat-value" id="stat-checkins-today">-</div>
+            <div class="stat-label">Check-ins Today</div>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    fetch('/api/v1/stats')
+        .then(function(res) { return res.json(); })
+        .then(function(data) {
+            document.getElementById('stat-total-customers').textContent = data.total_customers || 0;
+            document.getElementById('stat-active-members').textContent = data.active_members || 0;
+            document.getElementById('stat-total-coaches').textContent = data.total_coaches || 0;
+            document.getElementById('stat-total-courses').textContent = data.total_courses || 0;
+            document.getElementById('stat-checkins-today').textContent = data.checkins_today || 0;
+        })
+        .catch(function(err) { console.warn('Stats API error:', err); });
+})();
+</script>
